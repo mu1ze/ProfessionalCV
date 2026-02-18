@@ -1,0 +1,126 @@
+.feedback-container {
+    padding-top: 100px; /* Account for fixed header if any, or just spacing */
+    min-height: 80vh;
+}
+
+.feedback-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+    .feedback-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.feedback-form, .feedback-list {
+    background: rgba(10, 25, 47, 0.7);
+    border: 1px solid rgba(136, 146, 176, 0.1);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+    backdrop-filter: blur(5px);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--accent-cyan);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(136, 146, 176, 0.2);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+}
+
+.submit-btn {
+    background: transparent;
+    color: var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: rgba(100, 255, 218, 0.1);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.feedback-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: var(--spacing-md);
+    border-radius: 4px;
+    margin-bottom: var(--spacing-md);
+}
+
+.feedback-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.9rem;
+}
+
+.feedback-author {
+    color: var(--accent-cyan);
+    font-weight: bold;
+}
+
+.feedback-project {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.feedback-message {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.5;
+}
+
+.feedback-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: block;
+    text-align: right;
+}
+
+.error-message {
+    color: #ff6b6b;
+    margin-bottom: var(--spacing-md);
+}
+
+.success-message {
+    color: var(--accent-green, #64ffda);
+    margin-bottom: var(--spacing-md);
+}
+
+.no-feedback {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: var(--spacing-lg);
+}
