@@ -155,33 +155,41 @@ const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps) => {
                                         <div style={{ position: 'relative', height: '180px', backgroundColor: '#000' }}>
                                             <video
                                                 src={video.url}
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                 muted
                                                 playsInline
                                                 loop
                                                 onMouseOver={e => e.currentTarget.play()}
                                                 onMouseOut={e => e.currentTarget.pause()}
-                                            />
-                                            {/* Expand / Play Button */}
-                                            <div style={{
-                                                position: 'absolute',
-                                                bottom: '10px',
-                                                right: '10px',
-                                                background: 'rgba(0,0,0,0.6)',
-                                                borderRadius: '50%',
-                                                padding: '8px',
-                                                cursor: 'pointer',
-                                                backdropFilter: 'blur(4px)'
-                                            }}
                                                 onClick={() => setSelectedMedia({ url: video.url, type: 'video' })}
-                                                title="Open Video"
-                                            >
-                                                <Video size={16} color="white" />
-                                            </div>
+                                                style={{ cursor: 'pointer', width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
                                         </div>
-                                        <div style={{ padding: 'var(--spacing-md)' }}>
+                                        <div style={{ padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', flex: 1 }}>
                                             <h4 style={{ marginBottom: '4px', color: 'var(--text-primary)', fontSize: '1.1rem' }}>{video.title}</h4>
-                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>{video.description}</p>
+                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>{video.description}</p>
+
+                                            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end' }}>
+                                                <button
+                                                    onClick={() => setSelectedMedia({ url: video.url, type: 'video' })}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '6px',
+                                                        background: 'rgba(255, 255, 255, 0.1)',
+                                                        border: '1px solid var(--glass-border)',
+                                                        borderRadius: '20px',
+                                                        padding: '6px 12px',
+                                                        color: 'var(--text-primary)',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.85rem',
+                                                        transition: 'background 0.2s'
+                                                    }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                                                >
+                                                    <Video size={14} /> Watch Demo
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

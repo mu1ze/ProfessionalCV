@@ -50,7 +50,7 @@ export const projects: Project[] = [
             {
                 url: 'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/PinkCrown/Screen%20Recording%202026-02-11%20at%2010.53.32%20AM.mov',
                 title: 'Project Demo',
-                description: 'A complete walkthrough of the Pink Crown ecosystem, showcasing the admin dashboard and client booking flow.'
+                description: 'A complete walkthrough of the Pink Crown ecosystem, showcasing the client booking flow.'
             }
         ],
         screenshots: [
