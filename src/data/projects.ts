@@ -31,7 +31,7 @@ export const projects: Project[] = [
         fullDescription: 'Pink Crown is a dual-interface platform designed to revolutionize how beauty professionals manage their business. It combines a high-performance e-commerce storefront for customers with a powerful admin dashboard for inventory, appointments, and CRM.',
         tech: ['React', 'Node.js', 'PostgreSQL', 'Google Maps API', 'Resend'],
         github: '#',
-        live: '#',
+        live: 'https://pinkcrown.dvlli.com',
         features: [
             'Full-featured E-commerce Storefront',
             'Intelligent Admin Dashboard',
@@ -65,6 +65,53 @@ export const projects: Project[] = [
         problem: "Beauty professionals struggle with fragmented tools for booking, inventory, and payments, leading to lost revenue and administrative burnout.",
         solution: "A unified ecosystem integrating e-commerce and booking. Custom-built admin dashboard centralizes operations, while the client-facing app ensures a seamless booking experience.",
         impact: "Streamlined operations for beta users, reducing admin time by 40%. Enabled 24/7 booking capability, projected to increase appointment volume by 25%."
+    },
+    {
+        id: 'job-hunter',
+        title: 'Job Hunter',
+        description: 'Comprehensive job application tracking and optimization platform. Streamlines the search with AI insights and powerful tracking tools.',
+        fullDescription: 'Job Hunter is a comprehensive job application tracking and optimization platform designed to streamline your job search process. It combines powerful tracking tools with AI-driven insights to help you find relevant roles, manage your applications.',
+        tech: ['React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Zustand'],
+        github: '#',
+        live: '#',
+        features: [
+            'Application Tracker',
+            'AI Deep Match',
+            'Resume Manager',
+            'Document Generator',
+            'Job Search',
+            'Analytics',
+            'Alerts Manager'
+        ],
+        useCases: [
+            'Job Seekers organizing applications',
+            'Candidates optimizing resumes with AI',
+            'Users tracking interview progress'
+        ],
+        structure: 'React (Vite) frontend with TypeScript and Tailwind CSS. State management via Zustand. Supabase backend for Auth, Database, and Realtime features.',
+        heroImage: 'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2012.11.09%20PM.png',
+        videos: [
+            {
+                url: 'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screen%20Recording%202026-02-19%20at%2011.33.15%20AM.mov',
+                title: 'Project Demo',
+                description: 'A complete walkthrough of the Job Hunter ecosystem, showcasing the client booking flow.'
+            }
+        ],
+        screenshots: [
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.36.52%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.37.19%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.37.38%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.37.46%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.37.51%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.37.58%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.38.12%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.38.19%20AM.png',
+            'https://viholordwdwscgecabqo.supabase.co/storage/v1/object/public/portfolio-media/JobHunter/Screenshot%202026-02-19%20at%2011.38.30%20AM.png'
+        ],
+        featured: true,
+        problem: "Job seekers face disorganization and inefficiency when managing applications across multiple platforms, often submitting generic materials that fail to stand out.",
+        solution: "A unified platform integrating tracking, AI-powered job matching. 'Job Hunter' automates organization and tailors applications to specific roles.",
+        impact: "Empowers users to apply to more jobs with higher quality materials, reducing administrative overhead and improving interview conversion rates."
     },
     {
         id: 'high-heat',
