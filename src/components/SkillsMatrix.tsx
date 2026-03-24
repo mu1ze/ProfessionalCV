@@ -1,75 +1,75 @@
 import { Code2, Database, Layout, Terminal } from 'lucide-react';
-import { ScrollReveal } from './ScrollReveal';
+import { motion } from 'framer-motion';
+import './SkillsMatrix.css';
 
-const SkillsMatrix = () => {
-    const skillCategories = [
-        {
-            title: "Languages",
-            icon: <Code2 className="text-accent-primary" />,
-            skills: ["JavaScript (ES6+)", "TypeScript", "HTML5", "CSS3/SCSS", "Python", "SQL"]
-        },
-        {
-            title: "Frameworks & Libs",
-            icon: <Layout className="text-accent-secondary" />,
-            skills: ["React", "Node.js", "Express", "TailwindCSS", "Next.js", "Redux"]
-        },
-        {
-            title: "Tools & DevOps",
-            icon: <Terminal className="text-accent-creative" />,
-            skills: ["Git/GitHub", "Docker", "AWS (EC2, S3)", "Vercel", "Netlify", "Webpack"]
-        },
-        {
-            title: "Other",
-            icon: <Database className="text-accent-primary" />,
-            skills: ["RESTful APIs", "GraphQL", "Agile/Scrum", "UI/UX Design", "SEO"]
-        }
-    ];
+const skillCategories = [
+    {
+        title: 'Languages',
+        icon: <Code2 size={18} />,
+        color: 'cyan',
+        skills: ['JavaScript (ES6+)', 'TypeScript', 'HTML5', 'CSS3/SCSS', 'Python', 'SQL'],
+    },
+    {
+        title: 'Frameworks & Libraries',
+        icon: <Layout size={18} />,
+        color: 'purple',
+        skills: ['React', 'Node.js', 'Express', 'TailwindCSS', 'Next.js', 'Redux'],
+    },
+    {
+        title: 'Tools & DevOps',
+        icon: <Terminal size={18} />,
+        color: 'pink',
+        skills: ['Git/GitHub', 'Docker', 'AWS', 'Vercel', 'Netlify', 'Webpack'],
+    },
+    {
+        title: 'Other',
+        icon: <Database size={18} />,
+        color: 'gold',
+        skills: ['RESTful APIs', 'GraphQL', 'Agile/Scrum', 'UI/UX Design', 'SEO'],
+    },
+];
 
+export default function SkillsMatrix() {
     return (
-        <section id="skills" style={{ padding: 'var(--spacing-xxl) 0', marginBottom: 'var(--spacing-xxl)' }}>
-            <ScrollReveal>
-                <h2 style={{ marginBottom: 'var(--spacing-xl)', fontSize: '2.5rem' }}>The <span className="text-gradient">Arsenal</span></h2>
-            </ScrollReveal>
+        <section id="skills" className="skills-section">
+            <div className="container">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <div className="skills-header">
+                        <span className="skills-label">
+                            <span className="skills-hash">0x04 // </span>THE_ARSENAL
+                        </span>
+                        <h2 className="skills-title">Skills &amp; Tech Stack</h2>
+                    </div>
+                </motion.div>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: 'var(--spacing-lg)'
-            }}>
-                {skillCategories.map((category, index) => (
-                    <ScrollReveal key={category.title} delay={index * 0.1}>
-                        <div className="glass-panel" style={{
-                            padding: 'var(--spacing-lg)',
-                            height: '100%',
-                            transition: 'transform 0.3s ease'
-                        }}
-                            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-                            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                <div className="skills-grid">
+                    {skillCategories.map((cat, index) => (
+                        <motion.div
+                            key={cat.title}
+                            className={`skill-card color-${cat.color}`}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
-                                {category.icon}
-                                <h3 style={{ margin: 0, fontSize: '1.25rem' }}>{category.title}</h3>
+                            <div className="skill-card-header">
+                                <span className="skill-icon">{cat.icon}</span>
+                                <h3 className="skill-card-title">{cat.title}</h3>
                             </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {category.skills.map((item, i) => (
-                                    <span key={i} style={{
-                                        padding: '6px 14px',
-                                        backgroundColor: 'var(--bg-color-alt)',
-                                        borderRadius: 'var(--radius-sm)',
-                                        fontSize: '0.9rem',
-                                        color: 'var(--text-secondary)',
-                                        border: '1px solid rgba(255,255,255,0.05)'
-                                    }}>
-                                        {item}
-                                    </span>
+                            <div className="skill-tags">
+                                {cat.skills.map((s, i) => (
+                                    <span key={i} className="skill-tag">{s}</span>
                                 ))}
                             </div>
-                        </div>
-                    </ScrollReveal>
-                ))}
+                        </motion.div>
+                    ))}
+                </div>
             </div>
-        </section >
+        </section>
     );
-};
-
-export default SkillsMatrix;
+}

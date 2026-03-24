@@ -1,164 +1,63 @@
 /* 
-  Executive SaaS / Premium Portfolio Palette 
-  Theme: Dark, Sophisticated, Deep Forest & Gold
+  DVLLI Professional CV — Web3 Aesthetic
+  Dark: Deep void + Electric neon accents
+  Feel: Blockchain terminal meets premium portfolio
 */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Colors - Base (Deep Forest) */
-  --bg-color: #022c22;
-  /* Emerald 950 - Deepest Green */
-  --bg-color-alt: #064e3b;
-  /* Emerald 900 - Rich Green */
-  --bg-card: rgba(6, 78, 59, 0.7);
-  --bg-overlay: rgba(2, 44, 34, 0.85);
-
+  /* Core Background */
+  --bg-void: #03040a;
+  --bg-deep: #06080f;
+  --bg-card: #0a0e1a;
+  --bg-card-hover: #0f1525;
+  --bg-overlay: rgba(3, 4, 10, 0.85);
+  
   /* Text */
-  --text-primary: #ecfdf5;
-  /* Emerald 50 - Ice White/Green */
-  --text-secondary: #a7f3d0;
-  /* Emerald 200 - Soft Green */
-  --text-muted: #6ee7b7;
-  /* Emerald 300 - Muted Green */
-
-  /* Accents */
-  --accent-primary: #34d399;
-  /* Emerald 400 - Vibrant Green */
-  --accent-secondary: #fcd34d;
-  /* Amber 300 - Gold/Luxury Accent */
-  --accent-creative: #2dd4bf;
-  /* Teal 400 - Creative/Tech */
-  --accent-danger: #f87171;
-  /* Red 400 */
-
-  /* Glassmorphism */
-  --glass-bg: rgba(236, 253, 245, 0.05);
-  /* Tinted with light green */
-  --glass-border: rgba(52, 211, 153, 0.15);
-  /* Tinted border */
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  --glass-blur: 16px;
-
+  --text-primary: #f0f4ff;
+  --text-secondary: #8892b0;
+  --text-muted: #4a5568;
+  
+  /* Web3 Neon Palette */
+  --neon-cyan: #00f5d4;
+  --neon-purple: #bf5af2;
+  --neon-pink: #ff2d78;
+  --neon-blue: #00b4d8;
+  --neon-gold: #ffd60a;
+  
+  /* Gradients */
+  --gradient-neon: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+  --gradient-border: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  --gradient-glow: linear-gradient(135deg, rgba(0,245,212,0.15), rgba(191,90,242,0.1));
+  
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-blur: 20px;
+  
   /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 32px;
   --spacing-xl: 64px;
-  --spacing-xxl: 128px;
-
+  --spacing-2xl: 120px;
+  
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Borders */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
+  --transition-smooth: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Base Styles */
-body {
-  background-color: var(--bg-color);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Outfit', sans-serif;
-  margin: 0 0 var(--spacing-md) 0;
-  color: var(--text-primary);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-h1 {
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-h2 {
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 700;
-}
-
-h3 {
-  font-size: clamp(24px, 4vw, 32px);
-  font-weight: 600;
-  color: var(--accent-primary);
-}
-
-p {
-  margin: 0 0 var(--spacing-md) 0;
-  color: var(--text-secondary);
-  font-size: 1.125rem;
-  max-width: 65ch;
-}
-
-a {
-  color: var(--accent-primary);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  position: relative;
-}
-
-a:hover {
-  color: var(--accent-secondary);
-}
-
-/* Utilities */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
-  width: 100%;
-}
-
-.section {
-  padding: var(--spacing-xxl) 0;
-  position: relative;
-  width: 100%;
-}
-
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  border-radius: var(--radius-lg);
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bg-color-alt);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+/* Hash-style decorative text */
+.font-hash {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
 }

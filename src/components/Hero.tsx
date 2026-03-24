@@ -1,129 +1,133 @@
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import './Hero.css';
 
-const Hero = () => {
-    const scrollToExperience = () => {
-        const experienceSection = document.getElementById('experience');
-        experienceSection?.scrollIntoView({ behavior: 'smooth' });
+export default function Hero() {
+    const heroRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+            gsap.set('.hero-tag', { opacity: 0, y: 20 });
+            gsap.set('.hero-title span', { opacity: 0, y: 60, rotateX: -30 });
+            gsap.set('.hero-sub', { opacity: 0, x: -30 });
+            gsap.set('.hero-desc', { opacity: 0, y: 20 });
+            gsap.set('.hero-actions', { opacity: 0, y: 20 });
+            gsap.set('.hero-data', { opacity: 0 });
+
+            tl
+                .to('.hero-tag', { opacity: 1, y: 0, duration: 0.7 }, 0.3)
+                .to('.hero-title span', { opacity: 1, y: 0, rotateX: 0, duration: 1, stagger: 0.1 }, 0.5)
+                .to('.hero-sub', { opacity: 1, x: 0, duration: 0.8 }, 1.1)
+                .to('.hero-desc', { opacity: 1, y: 0, duration: 0.8 }, 1.3)
+                .to('.hero-actions', { opacity: 1, y: 0, duration: 0.6 }, 1.5)
+                .to('.hero-data', { opacity: 1, duration: 0.5 }, 1.8);
+        }, heroRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    const scrollToCoverLetter = () => {
+        document.getElementById('cover-letter')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
-        <section className="container section" style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            paddingTop: 'var(--spacing-xxl)'
-        }}>
-            <div style={{ maxWidth: '900px' }}>
-                <h4 style={{
-                    color: 'var(--accent-primary)',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    marginBottom: 'var(--spacing-md)'
-                }}>
-                    Portfolio & Professional Journey
-                </h4>
+        <section className="hero-web3" ref={heroRef}>
+            {/* Ambient glows */}
+            <div className="ambient-glow glow-1" />
+            <div className="ambient-glow glow-2" />
+            <div className="ambient-glow glow-3" />
 
-                <h1 style={{ marginBottom: 'var(--spacing-lg)' }}>
-                    Aderinola Muiz Odebiyi
+            {/* Hex grid */}
+            <div className="hex-grid" />
+
+            {/* Grid background */}
+            <div className="hero-grid" />
+
+            <div className="hero-content">
+                {/* Tag */}
+                <div className="hero-tag">
+                    <span className="hero-tag-dot" />
+                    <span className="hero-tag-text">FULL STACK DEVELOPER · BROCK UNIVERSITY</span>
+                </div>
+
+                {/* Title */}
+                <h1 className="hero-title">
+                    <span>Aderinola</span>
+                    <span className="hero-title-accent">Muiz Odebiyi</span>
                 </h1>
 
-                <h2 style={{
-                    color: 'var(--text-secondary)',
-                    marginBottom: 'var(--spacing-lg)',
-                    fontWeight: 500
-                }}>
-                    Full Stack Developer building <span style={{ color: 'var(--accent-secondary)' }}>intelligent platforms</span> and scalable solutions.
-                </h2>
-
-                <p style={{
-                    fontSize: '1.25rem',
-                    maxWidth: '600px',
-                    marginBottom: 'var(--spacing-xl)',
-                    lineHeight: 1.8
-                }}>
-                    I transform complex requirements into seamless digital experiences.
-                    Specializing in React, Node.js, and Cloud Architectures, I help businesses
-                    and startups ship production-quality software.
+                {/* Subtitle */}
+                <p className="hero-sub">
+                    <span className="hero-sub-line" />
+                    Building intelligent platforms &amp; scalable solutions
                 </p>
 
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
-                    <button
-                        onClick={scrollToExperience}
-                        style={{
-                            padding: '16px 32px',
-                            backgroundColor: 'var(--accent-primary)',
-                            color: 'var(--bg-color)',
-                            fontWeight: 600,
-                            borderRadius: 'var(--radius-full)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 'var(--spacing-sm)',
-                            fontSize: '1rem',
-                            transition: 'all var(--transition-fast)'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--accent-secondary)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                    >
-                        Start the Journey <ArrowRight size={20} />
-                    </button>
+                {/* Description */}
+                <p className="hero-desc">
+                    I transform complex requirements into seamless digital experiences.
+                    Specializing in React, Node.js, Python &amp; Cloud Architectures —
+                    with a track record of shipping production-quality software.
+                </p>
 
+                {/* Actions */}
+                <div className="hero-actions">
+                    <button className="hero-btn-primary" onClick={scrollToCoverLetter}>
+                        <span>View Cover Letter</span>
+                        <ArrowRight size={18} />
+                    </button>
                     <a
-                        href="https://www.linkedin.com/in/muizOdebiyi"
+                        href="https://linkedin.com/in/muizOdebiyi"
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{
-                            padding: '16px 32px',
-                            border: '1px solid var(--text-secondary)',
-                            color: 'var(--text-primary)',
-                            fontWeight: 600,
-                            borderRadius: 'var(--radius-full)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 'var(--spacing-sm)',
-                            fontSize: '1rem',
-                            transition: 'all var(--transition-fast)'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--accent-primary)';
-                            e.currentTarget.style.color = 'var(--accent-primary)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--text-secondary)';
-                            e.currentTarget.style.color = 'var(--text-primary)';
-                        }}
+                        className="hero-btn-secondary"
                     >
                         LinkedIn
                     </a>
                 </div>
+
+                {/* Data badges */}
+                <div className="hero-data">
+                    <div className="hero-data-item">
+                        <span className="hero-data-val">3+</span>
+                        <span className="hero-data-label">Years Experience</span>
+                    </div>
+                    <div className="hero-data-sep" />
+                    <div className="hero-data-item">
+                        <span className="hero-data-val">15+</span>
+                        <span className="hero-data-label">Projects Shipped</span>
+                    </div>
+                    <div className="hero-data-sep" />
+                    <div className="hero-data-item">
+                        <span className="hero-data-val">Full Stack</span>
+                        <span className="hero-data-label">Expertise</span>
+                    </div>
+                </div>
             </div>
 
-            <div style={{
-                position: 'absolute',
-                bottom: '40px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                animation: 'bounce 2s infinite'
-            }}>
-                <ChevronDown size={32} color="var(--text-secondary)" />
+            {/* Scroll indicator */}
+            <div className="hero-scroll">
+                <ChevronDown size={24} />
+                <span>scroll</span>
             </div>
 
-            <style>{`
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-          40% {transform: translateY(-10px) translateX(-50%);}
-          60% {transform: translateY(-5px) translateX(-50%);}
-        }
-      `}</style>
+            {/* Floating blockchain decorations */}
+            <div className="hero-blockchain-deco">
+                <div className="bcd-item bcd-1">
+                    <span className="bcd-hash">0x7f3a</span>
+                    <span className="bcd-label">LATEST_BLOCK</span>
+                </div>
+                <div className="bcd-item bcd-2">
+                    <span className="bcd-hash">0xa9c2</span>
+                    <span className="bcd-label">PREV_HASH</span>
+                </div>
+                <div className="bcd-item bcd-3">
+                    <span className="bcd-hash">0xb12e</span>
+                    <span className="bcd-label">TX_COUNT</span>
+                </div>
+            </div>
         </section>
     );
-};
-
-export default Hero;
+}
