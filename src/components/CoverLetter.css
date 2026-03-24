@@ -1,12 +1,92 @@
-/* Main paper — green background */
+/* ---- Section Header ---- */
+.cl-section {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cl-header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.cl-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.cl-hash {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #34d399;
+    letter-spacing: 0.5px;
+}
+
+.cl-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--neon-gold);
+    opacity: 0.8;
+}
+
+.cl-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon-gold);
+    box-shadow: 0 0 8px var(--neon-gold);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.cl-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 700;
+    color: #ecfdf5;
+    letter-spacing: -2px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.cl-title .gradient-text {
+    background: linear-gradient(135deg, #34d399, #6ee7b7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cl-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: #6ee7b7;
+    opacity: 0.7;
+}
+
+/* ---- Document ---- */
+.cl-document {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Main paper — green background with border styling */
 .paper-main {
     position: relative;
-    background: #022c22;
+    background: rgba(2, 44, 34, 0.85);
     border: 1px solid rgba(52, 211, 153, 0.15);
     border-radius: 16px;
     box-shadow:
+        0 0 0 1px rgba(52, 211, 153, 0.05),
         0 4px 24px rgba(0, 0, 0, 0.4),
-        0 16px 48px rgba(0, 0, 0, 0.3);
+        0 16px 48px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(52, 211, 153, 0.1);
     overflow: hidden;
     transform-style: preserve-3d;
 }
