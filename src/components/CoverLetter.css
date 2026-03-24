@@ -1,12 +1,12 @@
-/* Main paper — transparent/glass to show background */
+/* Main paper — green background */
 .paper-main {
     position: relative;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #022c22;
+    border: 1px solid rgba(52, 211, 153, 0.15);
     border-radius: 16px;
     box-shadow:
-        0 0 0 1px rgba(0, 245, 212, 0.05),
-        0 8px 32px rgba(0, 0, 0, 0.3);
+        0 4px 24px rgba(0, 0, 0, 0.4),
+        0 16px 48px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     transform-style: preserve-3d;
 }
@@ -18,8 +18,8 @@
     background-image: repeating-linear-gradient(
         transparent,
         transparent 31px,
-        rgba(0, 245, 212, 0.04) 31px,
-        rgba(0, 245, 212, 0.04) 32px
+        rgba(52, 211, 153, 0.06) 31px,
+        rgba(52, 211, 153, 0.06) 32px
     );
     background-position: 0 60px;
     pointer-events: none;
@@ -32,7 +32,7 @@
     z-index: 2;
     transform-style: preserve-3d;
     padding: 60px 56px;
-    color: var(--text-primary);
+    color: #d1fae5;
     font-family: var(--font-body);
 }
 
@@ -56,7 +56,7 @@
     height: 0;
     border-style: solid;
     border-width: 0 0 28px 28px;
-    border-color: transparent transparent rgba(0, 245, 212, 0.08) transparent;
+    border-color: transparent transparent rgba(52, 211, 153, 0.08) transparent;
     transform: translateZ(10px);
     z-index: 5;
 }
@@ -68,7 +68,7 @@
     right: 0;
     width: 28px;
     height: 28px;
-    background: linear-gradient(135deg, transparent 50%, rgba(0, 245, 212, 0.05) 50%);
+    background: linear-gradient(135deg, transparent 50%, rgba(52, 211, 153, 0.05) 50%);
 }
 
 /* Letterhead */
@@ -89,7 +89,7 @@
 .cl-name {
     font-weight: 700 !important;
     font-size: 1rem !important;
-    color: var(--neon-cyan) !important;
+    color: #34d399 !important;
     margin-bottom: 4px !important;
 }
 
@@ -123,7 +123,7 @@
 .cl-salutation {
     font-family: var(--font-body);
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: #d1fae5;
     margin-bottom: var(--spacing-lg);
 }
 
@@ -136,14 +136,14 @@
     font-family: var(--font-body) !important;
     font-size: 0.9rem !important;
     line-height: 1.85 !important;
-    color: var(--text-secondary) !important;
+    color: #a7f3d0 !important;
     margin-bottom: var(--spacing-md) !important;
     max-width: 100% !important;
     text-align: justify;
 }
 
 .cl-para strong {
-    color: var(--text-primary);
+    color: #ecfdf5;
     font-weight: 600;
 }
 
@@ -168,7 +168,7 @@
 .cl-signature-name {
     font-family: 'Brush Script MT', cursive, var(--font-body) !important;
     font-size: 1.6rem !important;
-    color: var(--text-primary) !important;
+    color: #d1fae5 !important;
     margin-bottom: 2px !important;
     line-height: 1.2 !important;
 }
@@ -195,15 +195,15 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--bg-card-hover) 0%, var(--bg-card) 100%);
-    border: 1px solid rgba(0, 245, 212, 0.2);
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    border: 1px solid rgba(52, 211, 153, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-display);
     font-size: 1.1rem;
     font-weight: 800;
-    color: var(--neon-cyan);
+    color: #34d399;
     letter-spacing: -1px;
-    box-shadow: 0 0 20px rgba(0, 245, 212, 0.15);
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
 }
