@@ -60,9 +60,7 @@ export default function CoverLetter() {
 
                 {/* Recipient */}
                 <div className="cl-recipient">
-                    <p>Hiring Committee</p>
-                    <p>[Company Name]</p>
-                    <p>[Address]</p>
+                    <p>To Whom It May Concern,</p>
                 </div>
 
                 <div className="cl-salutation">
