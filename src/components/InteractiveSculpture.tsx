@@ -52,15 +52,22 @@ const InteractiveSculpture = () => {
     });
 
     // Add some satellite blocks
-    const satellites = [
-      [1, 1, 1], [9, 9, 9], [1, 9, 1], [9, 1, 9], [1, 1, 9], [9, 9, 1]
+        const satellites = [
+      { pos: [1, 1, 1], color: '#06b6d4', stroke: '#0891b2' }, // cyan
+      { pos: [9, 1, 1], color: '#7c3aed', stroke: '#a78bfa' }, // purple
+      { pos: [1, 9, 1], color: '#7c3aed', stroke: '#a78bfa' }, // purple
+      { pos: [9, 9, 1], color: '#06b6d4', stroke: '#0891b2' }, // cyan
+      { pos: [1, 1, 9], color: '#7c3aed', stroke: '#a78bfa' }, // purple
+      { pos: [9, 1, 9], color: '#06b6d4', stroke: '#0891b2' }, // cyan
+      { pos: [1, 9, 9], color: '#06b6d4', stroke: '#0891b2' }, // cyan
+      { pos: [9, 9, 9], color: '#7c3aed', stroke: '#a78bfa' }  // purple
     ];
-    satellites.forEach(pos => {
+    satellites.forEach(({pos, color, stroke}) => {
       h.applyGeometry({
         type: 'box',
         center: pos,
         size: 1,
-        style: { default: { fill: '#7c3aed', stroke: '#a78bfa' } }
+        style: { default: { fill: color, stroke: stroke } }
       });
     });
 
