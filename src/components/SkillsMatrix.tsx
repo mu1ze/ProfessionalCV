@@ -6,25 +6,25 @@ const skillCategories = [
     title: 'Languages',
     icon: Code2,
     color: '#7c3aed',
-    skills: ['JavaScript (ES6+)', 'TypeScript', 'HTML5', 'CSS3 / SCSS', 'Python', 'SQL'],
+    skills: ['TypeScript', 'JavaScript (ES6+)', 'Python', 'HTML5', 'CSS3', 'SQL'],
   },
   {
     title: 'Frameworks & Libs',
     icon: Layout,
     color: '#06b6d4',
-    skills: ['React', 'Node.js', 'Express', 'Next.js', 'Redux', 'Framer Motion'],
+    skills: ['React', 'Vue.js', 'Node.js', 'Express', 'EJS'],
   },
   {
     title: 'Tools & DevOps',
     icon: Terminal,
     color: '#10b981',
-    skills: ['Git / GitHub', 'Docker', 'AWS (EC2, S3)', 'Vercel', 'Netlify', 'Vite'],
+    skills: ['Docker', 'Git / GitHub', 'Vite', 'Vercel', 'Netlify'],
   },
   {
     title: 'Data & APIs',
     icon: Database,
     color: '#f59e0b',
-    skills: ['PostgreSQL', 'Supabase', 'RESTful APIs', 'GraphQL', 'Google Maps API', 'Resend'],
+    skills: ['PostgreSQL', 'PLpgSQL', 'Supabase', 'RESTful APIs', 'Google Maps API'],
   },
 ];
 
