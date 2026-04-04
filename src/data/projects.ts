@@ -115,6 +115,7 @@ export const projects: Project[] = [
             'Identifying keyword gaps between resume and job postings'
         ],
         structure: 'TypeScript backend with a PostgreSQL database. Business logic encapsulated in PLpgSQL stored procedures for performance. REST API layer exposes endpoints for the client interface.',
+        featured: true,
         problem: "Most job seekers send generic resumes and never hear back, unable to identify why their applications are filtered out by ATS systems.",
         solution: "Job-Hunter parses job descriptions and cross-references them with resume content, surfacing missing keywords and ranking optimization suggestions.",
         impact: "Helps candidates tailor applications more precisely, increasing the likelihood of recruiter review and interview callbacks."
@@ -140,6 +141,7 @@ export const projects: Project[] = [
             'SMBs needing a lightweight CRM alternative'
         ],
         structure: 'Node.js/TypeScript server rendering HTML via EJS templates. Stateless session handling with lightweight persistence. Modular route structure separating leads, deals, and reporting concerns.',
+        featured: true,
         problem: "Sales teams rely on bloated CRM platforms that slow down daily workflows and obscure key pipeline metrics.",
         solution: "A streamlined sales tool that surfaces only the data reps need — leads, deal stages, and next actions — with a fast server-rendered interface.",
         impact: "Reduces context-switching for sales reps and gives managers real-time visibility into pipeline health without enterprise CRM overhead."
@@ -165,6 +167,7 @@ export const projects: Project[] = [
             'Data scientists experimenting with bio-inspired algorithms'
         ],
         structure: 'Python backend implements the core swarm engine and exposes a REST API. Vue.js frontend renders real-time agent visualizations. The full stack is containerized with Docker for reproducible deployment.',
+        featured: true,
         problem: "Swarm intelligence research requires complex simulation infrastructure that is difficult to set up, configure, and visualize.",
         solution: "MiroFish abstracts the complexity into a universal engine with a clean Vue.js interface, making swarm simulations accessible and configurable without deep infrastructure knowledge.",
         impact: "Enables rapid experimentation with swarm models, lowering the barrier to entry for bio-inspired computing research and distributed system design."
@@ -190,6 +193,7 @@ export const projects: Project[] = [
             'Demonstrating core web fundamentals without frameworks'
         ],
         structure: 'Static site built with HTML, CSS, and vanilla JavaScript. No build tools or bundlers — files served directly for maximum simplicity and performance.',
+        featured: true,
         problem: "Most portfolio templates rely on heavy frameworks that add unnecessary complexity for a simple personal site.",
         solution: "A from-scratch build using only web fundamentals — delivering a fast, fully custom experience that demonstrates core front-end proficiency.",
         impact: "Serves as a clean, professional web presence with sub-second load times and full control over every design and interaction detail."
