@@ -1,6 +1,5 @@
 @import './styles/variables.css';
 
-/* Global Reset & Utility Overrides */
 :root {
   color-scheme: dark;
 }
@@ -22,8 +21,6 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  padding: var(--spacing-md);
-  /* Added padding frame */
 }
 
 #root {
@@ -40,50 +37,48 @@ button {
   font-family: inherit;
 }
 
-@keyframes gradient-move {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-/* Utilities */
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-img,
-video {
+img, video {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-ul {
-  list-style: none;
+ul { list-style: none; }
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
+
+@keyframes orb-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -60px) scale(1.05); }
+  66% { transform: translate(-30px, 30px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.animate-float { animation: float 6s ease-in-out infinite; }

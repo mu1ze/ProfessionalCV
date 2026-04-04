@@ -1,103 +1,257 @@
-import { Calendar, MapPin } from 'lucide-react';
+import { Calendar, MapPin, Briefcase } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 
 const experiences = [
-    {
-        id: 1,
-        role: 'Full Stack Developer',
-        company: 'Self-Employed',
-        period: 'Dec 2025 – Present',
-        location: 'Remote, ON',
-        description: [
-            'Driven by a passion for continuous learning, actively expanding expertise across the full stack — from modern frontend frameworks to scalable backend architectures.',
-            'Developed and deployed multiple production websites, demonstrating end-to-end ownership of the full development lifecycle.',
-            'Designed and implemented responsive, user-friendly web applications using modern frameworks including React and Node.js.',
-            'Managed frontend and backend development, database architecture, and deployment pipelines via Netlify.',
-            'Integrated third-party APIs including Google Maps API to enhance application functionality.'
-        ]
-    },
-    {
-        id: 2,
-        role: "Level 3 Technical Advisor",
-        company: "Transcom",
-        period: "May 2024 - Present",
-        description: [
-            "Provided tier-2 technical support for complex hardware and software issues. consistently exceeding SLA targets and mentoring new team members.",
-            'Provide advanced technical support and troubleshooting for macOS systems, resolving complex software issues.',
-            'Able to breakdown and communicate complex technical issues to less technical people clearly and concisely',
-            'Contribute to continuous improvement initiatives and knowledge sharing across the support team'
-        ],
-        location: "Remote"
-    },
-    {
-        id: 3,
-        role: "Undergraduate Research Assistant",
-        company: "Brock University",
-        period: "Sept 2023 - April 2024",
-        description: [
-            "Assisted in the design and implementation of experiments to study human-computer interaction.",
-            "Team member for project to develop 3D walk-through simulation of a hospital, using Unity and C++",
-        ],
-        location: "St. Catharines, ON"
-    }
+  {
+    id: 1,
+    role: 'Full Stack Developer',
+    company: 'Self-Employed',
+    period: 'Dec 2025 – Present',
+    location: 'Remote, ON',
+    color: '#7c3aed',
+    description: [
+      'Developed and deployed multiple production websites with end-to-end ownership of the full development lifecycle.',
+      'Designed and built responsive, user-friendly web applications using React and Node.js.',
+      'Managed frontend, backend, database architecture, and deployment pipelines via Netlify.',
+      'Integrated third-party APIs including Google Maps API to enhance application functionality.',
+    ],
+    tech: ['React', 'Node.js', 'PostgreSQL', 'Netlify', 'TypeScript'],
+  },
+  {
+    id: 2,
+    role: 'Level 3 Technical Advisor',
+    company: 'Transcom',
+    period: 'May 2024 – Present',
+    location: 'Remote',
+    color: '#06b6d4',
+    description: [
+      'Provided tier-2 technical support for complex hardware and software issues, consistently exceeding SLA targets and mentoring new team members.',
+      'Advanced troubleshooting for macOS systems, resolving complex software and hardware issues.',
+      'Break down and communicate complex technical issues to less technical audiences clearly and concisely.',
+      'Contribute to continuous improvement initiatives and knowledge sharing across the support team.',
+    ],
+    tech: ['macOS', 'Technical Support', 'SLA Management', 'Mentoring'],
+  },
+  {
+    id: 3,
+    role: 'Undergraduate Research Assistant',
+    company: 'Brock University',
+    period: 'Sept 2023 – April 2024',
+    location: 'St. Catharines, ON',
+    color: '#10b981',
+    description: [
+      'Assisted in design and implementation of experiments to study human-computer interaction.',
+      'Team member for a project developing a 3D walk-through simulation of a hospital, using Unity and C++.',
+    ],
+    tech: ['Unity', 'C++', 'HCI Research'],
+  },
 ];
 
 const ExperienceTimeline = () => {
-    return (
-        <section id="experience" style={{ padding: 'var(--spacing-xxl) 0' }}>
-            <ScrollReveal>
-                <h2 style={{ marginBottom: 'var(--spacing-xl)', fontSize: '2.5rem' }}>The <span className="text-gradient">Climb</span></h2>
-            </ScrollReveal>
+  return (
+    <section id="experience" style={{
+      padding: '120px 32px',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      width: '100%',
+    }}>
+      <ScrollReveal width="100%">
+        <div style={{ marginBottom: '72px' }}>
+          <h2 style={{
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            fontWeight: 800,
+            letterSpacing: '-0.03em',
+            marginBottom: '16px',
+          }}>
+            The{' '}
+            <span style={{
+              background: 'var(--gradient-primary)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>
+              Climb
+            </span>
+          </h2>
+          <p style={{ fontSize: '1.125rem', maxWidth: '480px', margin: 0 }}>
+            Roles that shaped my approach to building and solving hard problems.
+          </p>
+        </div>
+      </ScrollReveal>
 
-            <div className="timeline-container" style={{ position: 'relative', borderLeft: '2px solid var(--glass-border)', marginLeft: '20px' }}>
-                {experiences.map((exp, index) => (
-                    <ScrollReveal key={exp.id} delay={index * 0.2}>
-                        <div className="timeline-item" style={{
-                            marginBottom: 'var(--spacing-xl)',
-                            paddingLeft: 'var(--spacing-lg)',
-                            position: 'relative'
-                        }}>
-                            {/* Dot Indicator */}
-                            <div style={{
-                                position: 'absolute',
-                                left: '-49px', // Adjusted from -49px to account for paddingLeft on parent
-                                top: '0',
-                                width: '16px',
-                                height: '16px',
-                                backgroundColor: 'var(--accent-primary)',
-                                borderRadius: '50%',
-                                border: '4px solid var(--bg-color)',
-                                boxShadow: '0 0 0 2px var(--accent-primary)'
-                            }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {experiences.map((exp, index) => (
+          <ScrollReveal key={exp.id} delay={index * 0.12} width="100%">
+            <div
+              style={{
+                padding: '32px',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: '22px',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all var(--transition-normal)',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = `${exp.color}35`;
+                e.currentTarget.style.boxShadow = `0 8px 40px ${exp.color}12`;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {/* Left accent bar */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '3px',
+                height: '100%',
+                background: `linear-gradient(180deg, ${exp.color}, ${exp.color}40)`,
+                borderRadius: '3px 0 0 3px',
+              }} />
 
-                            <div className="glass-panel" style={{ padding: 'var(--spacing-lg)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: 'var(--spacing-md)', gap: 'var(--spacing-sm)' }}>
-                                    <div>
-                                        <h3 style={{ marginBottom: 'var(--spacing-xs)', fontSize: '1.5rem', color: 'var(--text-primary)' }}>{exp.role}</h3>
-                                        <div style={{ fontSize: '1.1rem', color: 'var(--accent-secondary)' }}>{exp.company}</div>
-                                    </div>
-                                    <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '4px' }}>
-                                            <Calendar size={14} /> {exp.period}
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                                            <MapPin size={14} /> {exp.location}
-                                        </div>
-                                    </div>
-                                </div>
+              {/* Header row */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                flexWrap: 'wrap',
+                gap: '16px',
+                marginBottom: '22px',
+              }}>
+                <div>
+                  {/* Company badge + icon */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    marginBottom: '8px',
+                  }}>
+                    <div style={{
+                      padding: '6px',
+                      background: `${exp.color}18`,
+                      border: `1px solid ${exp.color}28`,
+                      borderRadius: '8px',
+                      color: exp.color,
+                      display: 'flex',
+                    }}>
+                      <Briefcase size={14} />
+                    </div>
+                    <span style={{
+                      padding: '3px 10px',
+                      background: `${exp.color}12`,
+                      border: `1px solid ${exp.color}28`,
+                      borderRadius: '100px',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      color: exp.color,
+                    }}>
+                      {exp.company}
+                    </span>
+                  </div>
 
-                                <ul style={{ paddingLeft: '20px', listStyleType: 'disc', color: 'var(--text-secondary)' }}>
-                                    {exp.description.map((item, index) => (
-                                        <li key={index} style={{ marginBottom: 'var(--spacing-sm)' }}>{item}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </ScrollReveal>
+                  <h3 style={{
+                    fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                    letterSpacing: '-0.01em',
+                  }}>
+                    {exp.role}
+                  </h3>
+                </div>
+
+                {/* Period + location */}
+                <div className="exp-meta" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  alignItems: 'flex-end',
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    padding: '5px 12px',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '100px',
+                    fontSize: '0.78rem',
+                    color: 'var(--text-secondary)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    <Calendar size={11} /> {exp.period}
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontSize: '0.78rem',
+                    color: 'var(--text-muted)',
+                  }}>
+                    <MapPin size={11} /> {exp.location}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description bullets */}
+              <ul style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '9px',
+                marginBottom: '22px',
+              }}>
+                {exp.description.map((item, i) => (
+                  <li key={i} style={{
+                    display: 'flex',
+                    gap: '10px',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.9375rem',
+                    lineHeight: 1.65,
+                  }}>
+                    <span style={{
+                      minWidth: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      background: exp.color,
+                      marginTop: '9px',
+                      flexShrink: 0,
+                    }} />
+                    {item}
+                  </li>
                 ))}
+              </ul>
+
+              {/* Tech tags */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
+                {exp.tech.map((t, i) => (
+                  <span key={i} style={{
+                    padding: '4px 11px',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '100px',
+                    fontSize: '0.78rem',
+                    color: 'var(--text-muted)',
+                    fontWeight: 500,
+                  }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
-        </section>
-    );
+          </ScrollReveal>
+        ))}
+      </div>
+
+      <style>{`
+        @media (max-width: 600px) {
+          .exp-meta { align-items: flex-start !important; }
+        }
+      `}</style>
+    </section>
+  );
 };
 
 export default ExperienceTimeline;

@@ -5,48 +5,59 @@ import ExperienceTimeline from './components/ExperienceTimeline';
 import ProjectShowcase from './components/ProjectShowcase';
 import SkillsMatrix from './components/SkillsMatrix';
 import Navbar from './components/Navbar';
-// import Contact from './components/Contact'; // To be implemented
 
 function App() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    // Simulate loading for smooth entry
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      <div
-        className="bg-gradient"
-        style={{
-          background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, var(--accent-primary) 0%, transparent 15%), 
-                       radial-gradient(circle at 80% 20%, var(--accent-secondary) 0%, transparent 30%),
-                       radial-gradient(circle at 20% 80%, var(--accent-creative) 0%, transparent 30%)`,
-          opacity: 0.15,
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: -1,
-          transition: 'background 0.2s ease',
-          animation: 'gradient-move 20s infinite alternate'
-        }}
-      />
+      {/* Ambient background orbs */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: -1,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: '-15%',
+          right: '-5%',
+          width: '700px',
+          height: '700px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 65%)',
+          animation: 'orb-drift 22s ease-in-out infinite',
+          filter: 'blur(48px)',
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '5%',
+          left: '-8%',
+          width: '600px',
+          height: '600px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(6,182,212,0.14) 0%, transparent 65%)',
+          animation: 'orb-drift 28s ease-in-out infinite reverse',
+          filter: 'blur(48px)',
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '55%',
+          left: '38%',
+          width: '400px',
+          height: '400px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%)',
+          animation: 'orb-drift 35s ease-in-out infinite',
+          filter: 'blur(48px)',
+        }} />
+      </div>
 
       <Navbar />
 
@@ -55,7 +66,6 @@ function App() {
         transition: 'opacity 0.8s ease-out',
         display: 'flex',
         flexDirection: 'column',
-        gap: 'var(--spacing-xxl)'
       }}>
         <Hero />
         <About />
@@ -63,13 +73,25 @@ function App() {
         <ProjectShowcase />
         <SkillsMatrix />
 
-        <footer className="container section" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-          <p>© {new Date().getFullYear()} Aderinola Muiz Odebiyi. Built with React & Vite.</p>
+        <footer style={{
+          padding: '40px 32px',
+          borderTop: '1px solid var(--border)',
+          textAlign: 'center',
+        }}>
+          <div className="container">
+            <p style={{
+              margin: 0,
+              maxWidth: 'none',
+              color: 'var(--text-muted)',
+              fontSize: '0.875rem',
+            }}>
+              © {new Date().getFullYear()} Aderinola Muiz Odebiyi · Built with React & Vite
+            </p>
+          </div>
         </footer>
       </main>
     </>
-  )
+  );
 }
 
-export default App
-
+export default App;
