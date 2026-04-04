@@ -4,6 +4,7 @@ import About from './components/About';
 import ExperienceTimeline from './components/ExperienceTimeline';
 import ProjectShowcase from './components/ProjectShowcase';
 import SkillsMatrix from './components/SkillsMatrix';
+import GitHubGraph3D from './components/GitHubGraph3D';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
         <ExperienceTimeline />
         <ProjectShowcase />
         <SkillsMatrix />
+        <GitHubGraph3D />
 
         <footer style={{
           padding: '40px 32px',
