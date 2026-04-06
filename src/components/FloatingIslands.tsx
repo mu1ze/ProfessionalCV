@@ -1,5 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
-import { Heerich } from 'heerich';
+import { useState, useEffect } from 'react';
 
 const islandData = [
   { 
@@ -36,128 +35,92 @@ const islandData = [
   },
 ];
 
-// Generate 3D island SVG using Heerich
-const generateIsland3D = (shape: string, color: string, time: number) => {
-  const h = new Heerich({
-    tile: 14,
-    camera: { type: 'isometric', angle: -45 }
-  });
-
-  // Floating animation offset based on time
-  const floatY = Math.sin(time * 2) * 0.3;
-
+// Pure SVG 3D-like shapes with animation
+const IslandShape = ({ shape, color, time }: { shape: string; color: string; time: number }) => {
+  const floatY = Math.sin(time * 2) * 3;
+  const pulse = 0.8 + Math.sin(time * 3) * 0.2;
+  
   if (shape === 'cube') {
-    // Rotating cube with pulsing edges
-    const rotation = Math.sin(time * 0.5) * 0.1;
-    h.applyGeometry({
-      type: 'box',
-      position: [0, floatY, 0],
-      size: [3, 3, 3],
-      style: {
-        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
-        top: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 }
-      }
-    });
-    // Inner glowing core
-    h.applyGeometry({
-      type: 'box',
-      position: [0, floatY, 0],
-      size: [1.5, 1.5, 1.5],
-      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
-    });
-  } 
-  else if (shape === 'pyramid') {
-    // Tetrahedron/pyramid
-    h.applyGeometry({
-      type: 'pyramid',
-      position: [0, floatY, 0],
-      size: 3.5,
-      style: {
-        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
-        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
-      }
-    });
-    // Base platform
-    h.applyGeometry({
-      type: 'box',
-      position: [0, floatY - 2, 0],
-      size: [3, 0.3, 3],
-      style: { default: { fill: '#1a1a24', stroke: color, strokeWidth: 0.5 } }
-    });
+    const rotate = Math.sin(time * 0.5) * 15;
+    return (
+      <g transform={`translate(0, ${floatY})`}>
+        {/* Back face */}
+        <polygon points="18,25 32,17 32,35 18,43" fill={color} opacity={0.6} transform={`rotate(${rotate}, 25, 30)`} />
+        {/* Top face */}
+        <polygon points="18,25 32,17 25,10 11,18" fill={color} opacity={0.9} transform={`rotate(${rotate}, 25, 30)`} />
+        {/* Front face */}
+        <polygon points="11,18 25,10 25,28 11,36" fill={color} opacity={1} transform={`rotate(${rotate}, 25, 30)`} />
+        {/* Side face */}
+        <polygon points="25,10 32,17 32,35 25,28" fill={color} opacity={0.75} transform={`rotate(${rotate}, 25, 30)`} />
+        {/* Inner glow */}
+        <polygon points="20,26 28,21 28,33 20,38" fill="#fff" opacity={pulse * 0.4} transform={`rotate(${rotate}, 25, 30)`} />
+      </g>
+    );
   }
-  else if (shape === 'cylinder') {
-    // Cylinder with rings
-    h.applyGeometry({
-      type: 'cylinder',
-      position: [0, floatY, 0],
-      radius: 1.5,
-      height: 3,
-      style: {
-        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
-        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
-      }
-    });
-    // Ring decoration
-    h.applyGeometry({
-      type: 'torus',
-      position: [0, floatY, 0],
-      radius: 2,
-      tube: 0.15,
-      style: { default: { fill: color, stroke: '#ffffff', strokeWidth: 0.3 } }
-    });
+  
+  if (shape === 'pyramid') {
+    return (
+      <g transform={`translate(0, ${floatY})`}>
+        {/* Base */}
+        <polygon points="8,45 42,45 32,30 18,30" fill="#1a1a24" stroke={color} strokeWidth="1" />
+        {/* Left face */}
+        <polygon points="25,8 8,45 18,30" fill={color} opacity={0.85} />
+        {/* Right face */}
+        <polygon points="25,8 42,45 32,30" fill={color} opacity={0.7} />
+        {/* Front face */}
+        <polygon points="25,8 18,30 32,30" fill="#fff" opacity={pulse * 0.3} />
+      </g>
+    );
   }
-  else if (shape === 'crystal') {
-    // Elongated crystal/double pyramid
-    h.applyGeometry({
-      type: 'pyramid',
-      position: [0, floatY, 0],
-      size: 4,
-      style: {
-        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
-        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
-      }
-    });
-    // Floating facets
-    h.applyGeometry({
-      type: 'box',
-      position: [-1.5, floatY, 1.5],
-      size: [0.8, 2, 0.8],
-      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
-    });
-    h.applyGeometry({
-      type: 'box',
-      position: [1.5, floatY, -1.5],
-      size: [0.8, 2, 0.8],
-      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
-    });
+  
+  if (shape === 'cylinder') {
+    return (
+      <g transform={`translate(0, ${floatY})`}>
+        {/* Top ellipse */}
+        <ellipse cx="25" cy="12" rx="14" ry="5" fill={color} opacity={0.9} />
+        {/* Body */}
+        <rect x="11" y="12" width="28" height="30" fill={color} opacity={0.75} />
+        {/* Bottom ellipse */}
+        <ellipse cx="25" cy="42" rx="14" ry="5" fill={color} opacity={0.6} />
+        {/* Ring */}
+        <ellipse cx="25" cy="25" rx="18" ry="6" fill="none" stroke={color} strokeWidth="1.5" opacity={pulse} />
+      </g>
+    );
   }
-
-  return h.toSVG({ padding: 8 };
+  
+  // crystal - hexagon-like
+  return (
+    <g transform={`translate(0, ${floatY})`}>
+      {/* Left facet */}
+      <polygon points="25,5 12,20 12,35 25,50" fill={color} opacity={0.7} />
+      {/* Right facet */}
+      <polygon points="25,5 38,20 38,35 25,50" fill={color} opacity={0.85} />
+      {/* Center highlight */}
+      <polygon points="25,10 25,45 30,35 30,20" fill="#fff" opacity={pulse * 0.35} />
+      {/* Left satellite */}
+      <rect x="8" y="20" width="4" height="12" fill="#fff" opacity={0.6} />
+      {/* Right satellite */}
+      <rect x="38" y="20" width="4" height="12" fill="#fff" opacity={0.6} />
+    </g>
+  );
 };
 
 const FloatingIslands = () => {
   const [selectedIsland, setSelectedIsland] = useState<number | null>(null);
   const [time, setTime] = useState(0);
 
-  // Animation loop for real-time 3D updates
   useEffect(() => {
     if (selectedIsland !== null) {
-      // Slow down animation when one is selected
-      const interval = setInterval(() => {
-        setTime(t => t + 0.016);
-      }, 50);
+      const interval = setInterval(() => setTime(t => t + 0.016), 50);
       return () => clearInterval(interval);
     } else {
-      const interval = setInterval(() => {
-        setTime(t => t + 0.03);
-      }, 30);
+      const interval = setInterval(() => setTime(t => t + 0.03), 30);
       return () => clearInterval(interval);
     }
   }, [selectedIsland]);
 
   const selectedData = selectedIsland !== null ? islandData[selectedIsland] : null;
 
-  // Calculate positions - circular arrangement
   const getPosition = (index: number) => {
     const angle = (index * 90 - 90) * (Math.PI / 180);
     const radius = 90;
@@ -279,7 +242,7 @@ const FloatingIslands = () => {
         </div>
       )}
       
-      {/* 3D Islands Canvas */}
+      {/* SVG Canvas with 3D shapes */}
       <svg
         viewBox="0 0 360 360"
         style={{
@@ -302,18 +265,10 @@ const FloatingIslands = () => {
             <stop offset="0%" stopColor="#0a0a12" />
             <stop offset="100%" stopColor="#050508" />
           </radialGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
         </defs>
         
         <rect width="360" height="360" fill="url(#bgGlow)" />
 
-        {/* Render 3D islands */}
         {islandData.map((island, index) => {
           const pos = getPosition(index);
           const isSelected = selectedIsland === index;
@@ -342,22 +297,15 @@ const FloatingIslands = () => {
                 opacity={isSelected ? 0.3 : 0.15}
               />
               
-              {/* 3D Heerich Render */}
-              <g transform="translate(-18, -30)">
-                <foreignObject width="36" height="60">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: generateIsland3D(island.shape, island.color, time + index * 1.5)
-                    }}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </foreignObject>
+              {/* 3D Shape */}
+              <g transform="translate(-25, -25) scale(0.65)">
+                <IslandShape shape={island.shape} color={island.color} time={time + index * 1.5} />
               </g>
               
               {!isOtherSelected && (
                 <text
                   x={0}
-                  y={45}
+                  y={55}
                   textAnchor="middle"
                   fill="#94a3b8"
                   fontSize={isSelected ? 14 : 11}
