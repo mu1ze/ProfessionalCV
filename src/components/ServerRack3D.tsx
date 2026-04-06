@@ -7,35 +7,37 @@ const bladesData = [
     title: 'Database', 
     skill: 'PostgreSQL & SQL', 
     color: '#f59e0b',
-    details: ['PostgreSQL', 'PLpgSQL', 'Supabase', 'RESTful APIs']
+    details: ['PostgreSQL', 'PLpgSQL', 'Supabase', 'RESTful APIs'],
+    translateY: 0
   },
   { 
     id: 1, 
     title: 'DevOps', 
     skill: 'Docker & AWS', 
     color: '#10b981',
-    details: ['Docker', 'Git / GitHub', 'Vite', 'Vercel']
+    details: ['Docker', 'Git / GitHub', 'Vite', 'Vercel'],
+    translateY: -70
   },
   { 
     id: 2, 
     title: 'Backend', 
     skill: 'Node.js & Express', 
     color: '#7c3aed',
-    details: ['Node.js', 'Express', 'EJS', 'Python']
+    details: ['Node.js', 'Express', 'EJS', 'Python'],
+    translateY: -140
   },
   { 
     id: 3, 
     title: 'Frontend', 
     skill: 'React & Vite', 
     color: '#06b6d4',
-    details: ['React', 'Vue.js', 'TypeScript', 'HTML5/CSS3']
+    details: ['React', 'Vue.js', 'TypeScript', 'HTML5/CSS3'],
+    translateY: -210
   },
 ];
 
 const ServerRack3D = () => {
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [zoomedBlade, setZoomedBlade] = useState<number | null>(null);
-  const [isZooming, setIsZooming] = useState(false);
 
   const svgContent = useMemo(() => {
     const h = new Heerich({
@@ -119,101 +121,84 @@ const ServerRack3D = () => {
 
   const handleBladeClick = (bladeId: number) => {
     if (zoomedBlade === bladeId) {
-      // Zoom out
-      setIsZooming(true);
-      setZoomLevel(1);
-      setTimeout(() => {
-        setZoomedBlade(null);
-        setIsZooming(false);
-      }, 400);
+      setZoomedBlade(null);
     } else {
-      // Zoom in to this blade
-      setIsZooming(true);
       setZoomedBlade(bladeId);
-      setZoomLevel(2.5);
-      setTimeout(() => setIsZooming(false), 400);
     }
   };
 
   const activeBladeData = zoomedBlade !== null ? bladesData[zoomedBlade] : null;
+  const activeTranslateY = zoomedBlade !== null ? bladesData[zoomedBlade].translateY : 0;
 
   return (
     <div style={{ 
       position: 'relative', 
       width: '100%', 
       maxWidth: '340px', 
-      margin: '0 auto'
+      margin: '0 auto',
+      overflow: 'hidden',
+      borderRadius: '20px'
     }}>
-      {/* Zoomed-in Skill Detail Blocks */}
-      {zoomedBlade !== null && !isZooming && (
+      {/* Detail Overlay - appears on top when zoomed */}
+      {zoomedBlade !== null && (
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
+          bottom: 0,
           zIndex: 30,
-          animation: 'fadeSlideIn 0.4s ease-out'
+          background: 'rgba(5, 5, 10, 0.92)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          animation: 'overlayFadeIn 0.35s ease-out'
         }}>
           <style>{`
-            @keyframes fadeSlideIn {
-              from { opacity: 0; transform: translateY(20px); }
-              to { opacity: 1; transform: translateY(0); }
+            @keyframes overlayFadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
             }
           `}</style>
           
-          {/* Back button */}
-          <button
-            onClick={() => handleBladeClick(zoomedBlade)}
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              marginBottom: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backdropFilter: 'blur(10px)'
-            }}
-          >
-            ← Back to Rack
-          </button>
-
           {/* Header */}
           <div style={{
             background: 'var(--bg-card)',
             border: `1px solid ${activeBladeData!.color}40`,
             borderRadius: '16px',
-            padding: '20px',
-            marginBottom: '12px'
+            padding: '20px 28px',
+            marginBottom: '20px',
+            textAlign: 'center',
+            width: '100%',
+            maxWidth: '280px'
           }}>
             <div style={{ 
-              fontSize: '0.75rem', 
+              fontSize: '0.7rem', 
               color: activeBladeData!.color, 
               fontWeight: 700, 
               textTransform: 'uppercase', 
-              letterSpacing: '0.05em',
-              marginBottom: '4px'
+              letterSpacing: '0.1em',
+              marginBottom: '6px'
             }}>
               {activeBladeData!.title}
             </div>
-            <div style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>
+            <div style={{ color: '#fff', fontSize: '1.3rem', fontWeight: 700 }}>
               {activeBladeData!.skill}
             </div>
           </div>
 
           {/* Skill Tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', maxWidth: '280px' }}>
             {activeBladeData!.details.map((skill, i) => (
               <span
                 key={i}
                 style={{
-                  padding: '8px 14px',
-                  background: `${activeBladeData!.color}12`,
-                  border: `1px solid ${activeBladeData!.color}30`,
+                  padding: '8px 16px',
+                  background: `${activeBladeData!.color}15`,
+                  border: `1px solid ${activeBladeData!.color}35`,
                   borderRadius: '100px',
                   fontSize: '0.85rem',
                   color: '#e2e8f0',
@@ -224,25 +209,51 @@ const ServerRack3D = () => {
               </span>
             ))}
           </div>
+
+          {/* Back Button */}
+          <button
+            onClick={() => setZoomedBlade(null)}
+            style={{
+              marginTop: '24px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              color: '#94a3b8',
+              padding: '10px 20px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+              e.currentTarget.style.color = '#94a3b8';
+            }}
+          >
+            ← Back to Rack
+          </button>
         </div>
       )}
 
-      {/* Server Rack SVG */}
+      {/* Server Rack SVG - translates to center selected blade */}
       <div 
-        className={`server-rack-wrapper zoom-${zoomedBlade}`}
+        className="server-rack-wrapper"
         style={{
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
           filter: 'drop-shadow(0 20px 40px rgba(6, 182, 212, 0.15))',
           cursor: zoomedBlade === null ? 'pointer' : 'default',
-          opacity: isZooming ? 0.5 : zoomedBlade !== null ? 0.3 : 1,
-          transition: 'opacity 0.3s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          transform: `scale(${zoomLevel})`,
+          transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: `translateY(${activeTranslateY}px) scale(${zoomedBlade !== null ? 1.4 : 1})`,
           transformOrigin: 'center center'
         }}
         onClick={(e) => {
-          if (zoomedBlade !== null || isZooming) return;
+          if (zoomedBlade !== null) return;
           let target = e.target as HTMLElement;
           while (target && target !== e.currentTarget) {
             if (target.hasAttribute('data-blade')) {
@@ -258,11 +269,6 @@ const ServerRack3D = () => {
             width: 100%;
             height: auto;
             overflow: visible;
-            animation: float-rack 8s ease-in-out infinite;
-          }
-          @keyframes float-rack {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
           }
           .server-rack-wrapper polygon[data-blade] {
             transition: filter 0.2s;
