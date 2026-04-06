@@ -10,6 +10,14 @@ const bladesData = [
 
 const ServerRack3D = () => {
   const [activeBlade, setActiveBlade] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile viewport
+  useMemo(() => {
+    if (typeof window !== 'undefined') {
+      setIsMobile(window.innerWidth < 640);
+    }
+  }, []);
 
   const svgContent = useMemo(() => {
     const h = new Heerich({
@@ -31,12 +39,12 @@ const ServerRack3D = () => {
     // Carve out the front bay
     h.removeGeometry({
       type: 'box',
-      position: [0.5, 1, -0.1], // Slightly offset Z to carve cleanly
+      position: [0.5, 1, -0.1],
       size: [5, 12, 4],
       style: { default: { fill: '#050508', stroke: '#111' } }
     });
 
-    // Add 4 Server Blades (0 is bottom, 3 is top)
+    // Add 4 Server Blades
     const bladeYPositions = [10.5, 7.5, 4.5, 1.5];
     
     bladeYPositions.forEach((y, i) => {
@@ -53,7 +61,6 @@ const ServerRack3D = () => {
         }
       });
 
-      // Status Lights (cyan/violet)
       const lightColor = bladesData[i].color;
       
       // Light 1
@@ -75,14 +82,14 @@ const ServerRack3D = () => {
       });
     });
 
-    // Add cables in the back (static, they don't slide out)
+    // Cables
     h.applyGeometry({
       type: 'line',
       from: [5, 2, 4],
       to: [5, 12, 4],
       radius: 0.2,
       shape: 'rounded',
-      style: { default: { fill: '#ef4444' } } // red cable
+      style: { default: { fill: '#ef4444' } }
     });
     
     h.applyGeometry({
@@ -91,14 +98,13 @@ const ServerRack3D = () => {
       to: [4.5, 12, 4],
       radius: 0.2,
       shape: 'rounded',
-      style: { default: { fill: '#06b6d4' } } // cyan cable
+      style: { default: { fill: '#06b6d4' } }
     });
 
     return h.toSVG({ padding: 20 });
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Traverse up to find a polygon with data-blade
     let target = e.target as HTMLElement;
     while (target && target !== e.currentTarget) {
       if (target.hasAttribute('data-blade')) {
@@ -108,12 +114,23 @@ const ServerRack3D = () => {
       }
       target = target.parentElement as HTMLElement;
     }
-    // If clicked outside a blade, reset
     setActiveBlade(null);
   };
 
+  // Responsive styles
+  const containerWidth = isMobile ? '200px' : '320px';
+  const labelLeft = isMobile ? '105%' : '-15%';
+  const labelTransform = isMobile 
+    ? (activeBlade !== null ? 'translate(10px, -50%)' : 'translate(0px, -50%)')
+    : (activeBlade !== null ? 'translate(-30px, -50%)' : 'translate(0px, -50%)');
+
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
+    <div style={{ 
+      position: 'relative', 
+      width: '100%', 
+      maxWidth: containerWidth, 
+      margin: '0 auto' 
+    }}>
       <div 
         className={`server-rack-wrapper active-${activeBlade}`}
         onClick={handleClick}
@@ -143,12 +160,24 @@ const ServerRack3D = () => {
             filter: brightness(1.3);
           }
           
-          /* Isometric slide-out animation for active blades */
-          .server-rack-wrapper.active-0 polygon[data-blade="0"],
-          .server-rack-wrapper.active-1 polygon[data-blade="1"],
-          .server-rack-wrapper.active-2 polygon[data-blade="2"],
-          .server-rack-wrapper.active-3 polygon[data-blade="3"] {
-            transform: translate(-35px, 20px);
+          /* Desktop slide-out */
+          @media (min-width: 640px) {
+            .server-rack-wrapper.active-0 polygon[data-blade="0"],
+            .server-rack-wrapper.active-1 polygon[data-blade="1"],
+            .server-rack-wrapper.active-2 polygon[data-blade="2"],
+            .server-rack-wrapper.active-3 polygon[data-blade="3"] {
+              transform: translate(-35px, 20px);
+            }
+          }
+          
+          /* Mobile slide-out (smaller translation) */
+          @media (max-width: 639px) {
+            .server-rack-wrapper.active-0 polygon[data-blade="0"],
+            .server-rack-wrapper.active-1 polygon[data-blade="1"],
+            .server-rack-wrapper.active-2 polygon[data-blade="2"],
+            .server-rack-wrapper.active-3 polygon[data-blade="3"] {
+              transform: translate(-20px, 12px);
+            }
           }
         `}</style>
         <div dangerouslySetInnerHTML={{ __html: svgContent }} />
@@ -161,23 +190,24 @@ const ServerRack3D = () => {
           style={{
             position: 'absolute',
             top: blade.top,
-            left: '-15%',
-            background: 'rgba(10, 10, 15, 0.85)',
+            left: labelLeft,
+            background: 'rgba(10, 10, 15, 0.92)',
             border: `1px solid ${blade.color}40`,
-            padding: '14px 18px',
+            padding: isMobile ? '10px 14px' : '14px 18px',
             borderRadius: '12px',
             pointerEvents: 'none',
             opacity: activeBlade === blade.id ? 1 : 0,
-            transform: activeBlade === blade.id ? 'translate(-30px, -50%)' : 'translate(0px, -50%)',
+            transform: labelTransform,
             transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             boxShadow: `0 10px 30px ${blade.color}25`,
             backdropFilter: 'blur(10px)',
             zIndex: 20,
-            minWidth: '180px'
+            minWidth: isMobile ? '140px' : '180px',
+            maxWidth: isMobile ? '160px' : '200px'
           }}
         >
           <div style={{ 
-            fontSize: '0.75rem', 
+            fontSize: isMobile ? '0.65rem' : '0.75rem', 
             color: blade.color, 
             fontWeight: 700, 
             textTransform: 'uppercase', 
@@ -186,7 +216,11 @@ const ServerRack3D = () => {
           }}>
             {blade.title}
           </div>
-          <div style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: 600 }}>
+          <div style={{ 
+            color: '#ffffff', 
+            fontSize: isMobile ? '0.9rem' : '1.05rem', 
+            fontWeight: 600 
+          }}>
             {blade.skill}
           </div>
         </div>
