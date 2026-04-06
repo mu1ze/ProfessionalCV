@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Heerich } from 'heerich';
 
 const bladesData = [
@@ -10,14 +10,15 @@ const bladesData = [
 
 const ServerRack3D = () => {
   const [activeBlade, setActiveBlade] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
-  // Check for mobile viewport
-  useMemo(() => {
-    if (typeof window !== 'undefined') {
-      setIsMobile(window.innerWidth < 640);
-    }
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const isMobile = windowWidth < 640;
 
   const svgContent = useMemo(() => {
     const h = new Heerich({
@@ -25,7 +26,6 @@ const ServerRack3D = () => {
       camera: { type: 'isometric', angle: -45 }
     });
 
-    // Base Rack Cabinet
     h.applyGeometry({
       type: 'box',
       position: [0, 0, 0],
@@ -36,7 +36,6 @@ const ServerRack3D = () => {
       }
     });
 
-    // Carve out the front bay
     h.removeGeometry({
       type: 'box',
       position: [0.5, 1, -0.1],
@@ -44,11 +43,9 @@ const ServerRack3D = () => {
       style: { default: { fill: '#050508', stroke: '#111' } }
     });
 
-    // Add 4 Server Blades
     const bladeYPositions = [10.5, 7.5, 4.5, 1.5];
     
     bladeYPositions.forEach((y, i) => {
-      // Blade chassis
       h.applyGeometry({
         type: 'box',
         position: [0.8, y, 0],
@@ -63,7 +60,6 @@ const ServerRack3D = () => {
 
       const lightColor = bladesData[i].color;
       
-      // Light 1
       h.applyGeometry({
         type: 'box',
         position: [1.2, y + 0.5, -0.2],
@@ -72,7 +68,6 @@ const ServerRack3D = () => {
         style: { default: { fill: lightColor, stroke: '#fff', strokeWidth: 0.5 } }
       });
 
-      // Light 2
       h.applyGeometry({
         type: 'box',
         position: [2.0, y + 0.5, -0.2],
@@ -82,7 +77,6 @@ const ServerRack3D = () => {
       });
     });
 
-    // Cables
     h.applyGeometry({
       type: 'line',
       from: [5, 2, 4],
@@ -117,20 +111,65 @@ const ServerRack3D = () => {
     setActiveBlade(null);
   };
 
-  // Responsive styles
-  const containerWidth = isMobile ? '200px' : '320px';
-  const labelLeft = isMobile ? '105%' : '-15%';
-  const labelTransform = isMobile 
-    ? (activeBlade !== null ? 'translate(10px, -50%)' : 'translate(0px, -50%)')
-    : (activeBlade !== null ? 'translate(-30px, -50%)' : 'translate(0px, -50%)');
+  // Desktop: label to the left, Mobile: label above
+  const containerWidth = isMobile ? '180px' : '320px';
+  const labelPosition = isMobile 
+    ? { top: '-90px', left: '50%', transform: 'translateX(-50%)' }
+    : { top: blade => blade.top, left: '-15%', transform: 'translate(-30px, -50%)' };
 
   return (
     <div style={{ 
       position: 'relative', 
       width: '100%', 
       maxWidth: containerWidth, 
-      margin: '0 auto' 
+      margin: '0 auto',
+      paddingTop: isMobile ? '100px' : '0' // space for label on mobile
     }}>
+      {/* Floating Skill Labels - Above on mobile, Side on desktop */}
+      {bladesData.map((blade) => (
+        <div
+          key={blade.id}
+          style={{
+            position: 'absolute',
+            ...(isMobile 
+              ? { top: `-${(3 - blade.id) * 70 + 30}px`, left: '50%', transform: 'translateX(-50%)' }
+              : { top: blade.top, left: '-15%', transform: 'translate(-30px, -50%)' }
+            ),
+            background: 'rgba(10, 10, 15, 0.92)',
+            border: `1px solid ${blade.color}40`,
+            padding: isMobile ? '10px 16px' : '14px 18px',
+            borderRadius: '12px',
+            pointerEvents: 'none',
+            opacity: activeBlade === blade.id ? 1 : 0,
+            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            boxShadow: `0 10px 30px ${blade.color}25`,
+            backdropFilter: 'blur(10px)',
+            zIndex: 20,
+            minWidth: isMobile ? '160px' : '180px',
+            textAlign: 'center'
+          }}
+        >
+          <div style={{ 
+            fontSize: isMobile ? '0.65rem' : '0.75rem', 
+            color: blade.color, 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.05em', 
+            marginBottom: '6px' 
+          }}>
+            {blade.title}
+          </div>
+          <div style={{ 
+            color: '#ffffff', 
+            fontSize: isMobile ? '0.9rem' : '1.05rem', 
+            fontWeight: 600 
+          }}>
+            {blade.skill}
+          </div>
+        </div>
+      ))}
+
+      {/* SVG Rack */}
       <div 
         className={`server-rack-wrapper active-${activeBlade}`}
         onClick={handleClick}
@@ -160,7 +199,6 @@ const ServerRack3D = () => {
             filter: brightness(1.3);
           }
           
-          /* Desktop slide-out */
           @media (min-width: 640px) {
             .server-rack-wrapper.active-0 polygon[data-blade="0"],
             .server-rack-wrapper.active-1 polygon[data-blade="1"],
@@ -170,61 +208,17 @@ const ServerRack3D = () => {
             }
           }
           
-          /* Mobile slide-out (smaller translation) */
           @media (max-width: 639px) {
             .server-rack-wrapper.active-0 polygon[data-blade="0"],
             .server-rack-wrapper.active-1 polygon[data-blade="1"],
             .server-rack-wrapper.active-2 polygon[data-blade="2"],
             .server-rack-wrapper.active-3 polygon[data-blade="3"] {
-              transform: translate(-20px, 12px);
+              transform: translate(-18px, 10px);
             }
           }
         `}</style>
         <div dangerouslySetInnerHTML={{ __html: svgContent }} />
       </div>
-
-      {/* Floating Skill Labels */}
-      {bladesData.map((blade) => (
-        <div
-          key={blade.id}
-          style={{
-            position: 'absolute',
-            top: blade.top,
-            left: labelLeft,
-            background: 'rgba(10, 10, 15, 0.92)',
-            border: `1px solid ${blade.color}40`,
-            padding: isMobile ? '10px 14px' : '14px 18px',
-            borderRadius: '12px',
-            pointerEvents: 'none',
-            opacity: activeBlade === blade.id ? 1 : 0,
-            transform: labelTransform,
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            boxShadow: `0 10px 30px ${blade.color}25`,
-            backdropFilter: 'blur(10px)',
-            zIndex: 20,
-            minWidth: isMobile ? '140px' : '180px',
-            maxWidth: isMobile ? '160px' : '200px'
-          }}
-        >
-          <div style={{ 
-            fontSize: isMobile ? '0.65rem' : '0.75rem', 
-            color: blade.color, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.05em', 
-            marginBottom: '6px' 
-          }}>
-            {blade.title}
-          </div>
-          <div style={{ 
-            color: '#ffffff', 
-            fontSize: isMobile ? '0.9rem' : '1.05rem', 
-            fontWeight: 600 
-          }}>
-            {blade.skill}
-          </div>
-        </div>
-      ))}
     </div>
   );
 };
