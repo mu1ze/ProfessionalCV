@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Heerich } from 'heerich';
 
 const islandData = [
@@ -8,8 +8,7 @@ const islandData = [
     skill: 'React & Vite', 
     color: '#06b6d4',
     details: ['React', 'Vue.js', 'TypeScript', 'HTML5/CSS3', 'Vite'],
-    shape: 'pyramid',
-    icon: '◢'
+    shape: 'pyramid'
   },
   { 
     id: 1, 
@@ -17,8 +16,7 @@ const islandData = [
     skill: 'Node.js & Express', 
     color: '#7c3aed',
     details: ['Node.js', 'Express', 'EJS', 'Python', 'REST APIs'],
-    shape: 'cube',
-    icon: '◻'
+    shape: 'cube'
   },
   { 
     id: 2, 
@@ -26,8 +24,7 @@ const islandData = [
     skill: 'Docker & Cloud', 
     color: '#10b981',
     details: ['Docker', 'Git / GitHub', 'Vercel', 'Netlify'],
-    shape: 'cylinder',
-    icon: '◎'
+    shape: 'cylinder'
   },
   { 
     id: 3, 
@@ -35,198 +32,149 @@ const islandData = [
     skill: 'PostgreSQL & SQL', 
     color: '#f59e0b',
     details: ['PostgreSQL', 'PLpgSQL', 'Supabase', 'Database Design'],
-    shape: 'hexagon',
-    icon: '⬡'
+    shape: 'crystal'
   },
 ];
 
+// Generate 3D island SVG using Heerich
+const generateIsland3D = (shape: string, color: string, time: number) => {
+  const h = new Heerich({
+    tile: 14,
+    camera: { type: 'isometric', angle: -45 }
+  });
+
+  // Floating animation offset based on time
+  const floatY = Math.sin(time * 2) * 0.3;
+
+  if (shape === 'cube') {
+    // Rotating cube with pulsing edges
+    const rotation = Math.sin(time * 0.5) * 0.1;
+    h.applyGeometry({
+      type: 'box',
+      position: [0, floatY, 0],
+      size: [3, 3, 3],
+      style: {
+        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
+        top: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 }
+      }
+    });
+    // Inner glowing core
+    h.applyGeometry({
+      type: 'box',
+      position: [0, floatY, 0],
+      size: [1.5, 1.5, 1.5],
+      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
+    });
+  } 
+  else if (shape === 'pyramid') {
+    // Tetrahedron/pyramid
+    h.applyGeometry({
+      type: 'pyramid',
+      position: [0, floatY, 0],
+      size: 3.5,
+      style: {
+        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
+        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
+      }
+    });
+    // Base platform
+    h.applyGeometry({
+      type: 'box',
+      position: [0, floatY - 2, 0],
+      size: [3, 0.3, 3],
+      style: { default: { fill: '#1a1a24', stroke: color, strokeWidth: 0.5 } }
+    });
+  }
+  else if (shape === 'cylinder') {
+    // Cylinder with rings
+    h.applyGeometry({
+      type: 'cylinder',
+      position: [0, floatY, 0],
+      radius: 1.5,
+      height: 3,
+      style: {
+        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
+        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
+      }
+    });
+    // Ring decoration
+    h.applyGeometry({
+      type: 'torus',
+      position: [0, floatY, 0],
+      radius: 2,
+      tube: 0.15,
+      style: { default: { fill: color, stroke: '#ffffff', strokeWidth: 0.3 } }
+    });
+  }
+  else if (shape === 'crystal') {
+    // Elongated crystal/double pyramid
+    h.applyGeometry({
+      type: 'pyramid',
+      position: [0, floatY, 0],
+      size: 4,
+      style: {
+        default: { fill: color, stroke: '#ffffff', strokeWidth: 0.5 },
+        top: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 }
+      }
+    });
+    // Floating facets
+    h.applyGeometry({
+      type: 'box',
+      position: [-1.5, floatY, 1.5],
+      size: [0.8, 2, 0.8],
+      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
+    });
+    h.applyGeometry({
+      type: 'box',
+      position: [1.5, floatY, -1.5],
+      size: [0.8, 2, 0.8],
+      style: { default: { fill: '#ffffff', stroke: color, strokeWidth: 0.3 } }
+    });
+  }
+
+  return h.toSVG({ padding: 8 };
+};
+
 const FloatingIslands = () => {
   const [selectedIsland, setSelectedIsland] = useState<number | null>(null);
+  const [time, setTime] = useState(0);
 
-  const generateIslands = (selectedId: number | null) => {
-    const islands: JSX.Element[] = [];
-    
-    islandData.forEach((island, index) => {
-      const isSelected = selectedId === index;
-      const isOtherSelected = selectedId !== null && !isSelected;
-      
-      // Circular arrangement - 4 islands in a circle
-      const angle = (index * 90 - 90) * (Math.PI / 180); // Start from top
-      const radius = 70;
-      const x = 90 + Math.cos(angle) * radius;
-      const y = 90 + Math.sin(angle) * radius;
-      
-      // Floating animation delay - each island bobs at different time
-      const floatDelay = index * -0.5;
-      
-      // Scale up selected, scale down others
-      const scale = isSelected ? 1.3 : isOtherSelected ? 0.6 : 1;
-      const opacity = isOtherSelected ? 0.3 : 1;
-      
-      islands.push(
-        <g 
-          key={island.id}
-          transform={`translate(${x}, ${y})`}
-          style={{
-            transformOrigin: `${x}px ${y}px`,
-            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-            transform: `translate(${x}px, ${y}px) scale(${scale})`,
-            opacity
-          }}
-        >
-          {/* Platform Base */}
-          <g 
-            className="island-clickable"
-            data-island={island.id}
-            style={{ cursor: 'pointer' }}
-          >
-            {/* Floating platform shadow */}
-            <ellipse 
-              cx={0} 
-              cy={25} 
-              rx={22} 
-              ry={6} 
-              fill={island.color}
-              opacity={0.15}
-              style={{
-                animation: `shadowPulse 3s ease-in-out infinite`,
-                animationDelay: `${floatDelay}s`
-              }}
-            />
-            
-            {/* Platform - isometric hexagonal platform */}
-            <polygon
-              points="0,-20 18,-10 18,10 0,20 -18,10 -18,-10"
-              fill="#1a1a24"
-              stroke={island.color}
-              strokeWidth={isSelected ? 2 : 1}
-              opacity={0.9}
-              style={{
-                animation: `float ${4 + index * 0.5}s ease-in-out infinite`,
-                animationDelay: `${floatDelay}s`,
-                filter: isSelected ? `drop-shadow(0 0 15px ${island.color})` : 'none'
-              }}
-            />
-            
-            {/* Platform top surface */}
-            <polygon
-              points="0,-15 13,-7.5 13,7.5 0,15 -13,7.5 -13,-7.5"
-              fill="#232330"
-              stroke={island.color}
-              strokeWidth={1}
-              opacity={0.6}
-            />
-            
-            {/* Category Icon/Shape */}
-            <g style={{
-              animation: `float ${4 + index * 0.5}s ease-in-out infinite`,
-              animationDelay: `${floatDelay - 0.2}s`
-            }}>
-              {island.shape === 'pyramid' && (
-                <polygon
-                  points="0,-8 7,5 -7,5"
-                  fill={island.color}
-                  opacity={0.85}
-                  stroke="#fff"
-                  strokeWidth={0.5}
-                />
-              )}
-              {island.shape === 'cube' && (
-                <rect
-                  x={-6} y={-6}
-                  width={12} height={12}
-                  fill={island.color}
-                  opacity={0.85}
-                  stroke="#fff"
-                  strokeWidth={0.5}
-                  transform="rotate(45)"
-                />
-              )}
-              {island.shape === 'cylinder' && (
-                <ellipse
-                  cx={0} cy={-2}
-                  rx={7} ry={3}
-                  fill={island.color}
-                  opacity={0.85}
-                  stroke="#fff"
-                  strokeWidth={0.5}
-                />
-              )}
-              {island.shape === 'hexagon' && (
-                <polygon
-                  points="0,-7 6,-3.5 6,3.5 0,7 -6,3.5 -6,-3.5"
-                  fill={island.color}
-                  opacity={0.85}
-                  stroke="#fff"
-                  strokeWidth={0.5}
-                />
-              )}
-            </g>
-            
-            {/* Glow ring when selected */}
-            {isSelected && (
-              <circle
-                cx={0} cy={0} r={28}
-                fill="none"
-                stroke={island.color}
-                strokeWidth={1}
-                opacity={0.6}
-                style={{
-                  animation: 'ringExpand 1s ease-out infinite'
-                }}
-              />
-            )}
-          </g>
-          
-          {/* Label below island */}
-          {!isOtherSelected && (
-            <text
-              x={0}
-              y={38}
-              textAnchor="middle"
-              fill="#94a3b8"
-              fontSize={isSelected ? 13 : 10}
-              fontWeight={isSelected ? 700 : 500}
-              style={{
-                opacity: isSelected ? 1 : 0.7,
-                transition: 'all 0.3s'
-              }}
-            >
-              {island.title}
-            </text>
-          )}
-        </g>
-      );
-    });
-    
-    return islands;
-  };
+  // Animation loop for real-time 3D updates
+  useEffect(() => {
+    if (selectedIsland !== null) {
+      // Slow down animation when one is selected
+      const interval = setInterval(() => {
+        setTime(t => t + 0.016);
+      }, 50);
+      return () => clearInterval(interval);
+    } else {
+      const interval = setInterval(() => {
+        setTime(t => t + 0.03);
+      }, 30);
+      return () => clearInterval(interval);
+    }
+  }, [selectedIsland]);
 
   const selectedData = selectedIsland !== null ? islandData[selectedIsland] : null;
+
+  // Calculate positions - circular arrangement
+  const getPosition = (index: number) => {
+    const angle = (index * 90 - 90) * (Math.PI / 180);
+    const radius = 90;
+    return {
+      x: 180 + Math.cos(angle) * radius,
+      y: 180 + Math.sin(angle) * radius
+    };
+  };
 
   return (
     <div style={{ 
       position: 'relative', 
       width: '100%', 
-      maxWidth: '320px', 
+      maxWidth: '400px', 
       margin: '0 auto',
-      minHeight: '320px'
+      minHeight: '400px'
     }}>
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        @keyframes shadowPulse {
-          0%, 100% { opacity: 0.15; transform: scale(1); }
-          50% { opacity: 0.25; transform: scale(1.1); }
-        }
-        @keyframes ringExpand {
-          0% { r: 20; opacity: 0.8; }
-          100% { r: 35; opacity: 0; }
-        }
-      `}</style>
-
       {/* Selected Island Detail Panel */}
       {selectedIsland !== null && (
         <div
@@ -251,7 +199,6 @@ const FloatingIslands = () => {
             }
           `}</style>
           
-          {/* Close button */}
           <button
             onClick={() => setSelectedIsland(null)}
             style={{
@@ -265,16 +212,12 @@ const FloatingIslands = () => {
               height: '28px',
               borderRadius: '50%',
               cursor: 'pointer',
-              fontSize: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              fontSize: '16px'
             }}
           >
             ✕
           </button>
           
-          {/* Header */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -293,7 +236,7 @@ const FloatingIslands = () => {
               fontSize: '20px',
               color: selectedData!.color
             }}>
-              {selectedData!.icon}
+              ◆
             </div>
             <div>
               <div style={{
@@ -315,12 +258,7 @@ const FloatingIslands = () => {
             </div>
           </div>
           
-          {/* Skill Tags */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '8px'
-          }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {selectedData!.details.map((skill, i) => (
               <span
                 key={i}
@@ -341,34 +279,97 @@ const FloatingIslands = () => {
         </div>
       )}
       
-      {/* Main SVG Canvas */}
+      {/* 3D Islands Canvas */}
       <svg
-        viewBox="0 0 180 180"
+        viewBox="0 0 360 360"
         style={{
           width: '100%',
           height: 'auto',
-          cursor: selectedIsland === null ? 'default' : 'default'
+          cursor: selectedIsland === null ? 'pointer' : 'default'
         }}
         onClick={(e) => {
+          if (selectedIsland !== null) return;
           const target = e.target as SVGElement;
-          const islandGroup = target.closest('.island-clickable');
-          if (islandGroup) {
-            const id = parseInt(islandGroup.getAttribute('data-island') || '0');
+          const group = target.closest('[data-island]');
+          if (group) {
+            const id = parseInt(group.getAttribute('data-island') || '0');
             setSelectedIsland(prev => prev === id ? null : id);
           }
         }}
       >
-        {/* Background glow */}
         <defs>
           <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#0a0a12" stopOpacity="1" />
-            <stop offset="100%" stopColor="#050508" stopOpacity="1" />
+            <stop offset="0%" stopColor="#0a0a12" />
+            <stop offset="100%" stopColor="#050508" />
           </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
-        <rect width="180" height="180" fill="url(#bgGlow)" />
         
-        {/* Floating Islands */}
-        {generateIslands(selectedIsland)}
+        <rect width="360" height="360" fill="url(#bgGlow)" />
+
+        {/* Render 3D islands */}
+        {islandData.map((island, index) => {
+          const pos = getPosition(index);
+          const isSelected = selectedIsland === index;
+          const isOtherSelected = selectedIsland !== null && !isSelected;
+          
+          const scale = isSelected ? 1.4 : isOtherSelected ? 0.5 : 1;
+          const opacity = isOtherSelected ? 0.2 : 1;
+          
+          return (
+            <g
+              key={island.id}
+              data-island={island.id}
+              transform={`translate(${pos.x}, ${pos.y})`}
+              style={{
+                transformOrigin: `${pos.x}px ${pos.y}px`,
+                transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+                opacity,
+                filter: isSelected ? `drop-shadow(0 0 20px ${island.color})` : 'none'
+              }}
+            >
+              {/* Shadow */}
+              <ellipse
+                cx={0} cy={25} rx={20} ry={8}
+                fill={island.color}
+                opacity={isSelected ? 0.3 : 0.15}
+              />
+              
+              {/* 3D Heerich Render */}
+              <g transform="translate(-18, -30)">
+                <foreignObject width="36" height="60">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: generateIsland3D(island.shape, island.color, time + index * 1.5)
+                    }}
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </foreignObject>
+              </g>
+              
+              {!isOtherSelected && (
+                <text
+                  x={0}
+                  y={45}
+                  textAnchor="middle"
+                  fill="#94a3b8"
+                  fontSize={isSelected ? 14 : 11}
+                  fontWeight={isSelected ? 700 : 500}
+                  style={{ opacity: isSelected ? 1 : 0.7 }}
+                >
+                  {island.title}
+                </text>
+              )}
+            </g>
+          );
+        })}
       </svg>
     </div>
   );
