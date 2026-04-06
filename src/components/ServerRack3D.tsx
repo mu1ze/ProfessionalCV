@@ -1,24 +1,41 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { Heerich } from 'heerich';
 
 const bladesData = [
-  { id: 0, title: 'Database', skill: 'PostgreSQL & SQL', color: '#f59e0b', top: '75%' },
-  { id: 1, title: 'DevOps', skill: 'Docker & AWS', color: '#10b981', top: '55%' },
-  { id: 2, title: 'Backend', skill: 'Node.js & Express', color: '#7c3aed', top: '35%' },
-  { id: 3, title: 'Frontend', skill: 'React & Vite', color: '#06b6d4', top: '15%' },
+  { 
+    id: 0, 
+    title: 'Database', 
+    skill: 'PostgreSQL & SQL', 
+    color: '#f59e0b',
+    details: ['PostgreSQL', 'PLpgSQL', 'Supabase', 'RESTful APIs']
+  },
+  { 
+    id: 1, 
+    title: 'DevOps', 
+    skill: 'Docker & AWS', 
+    color: '#10b981',
+    details: ['Docker', 'Git / GitHub', 'Vite', 'Vercel']
+  },
+  { 
+    id: 2, 
+    title: 'Backend', 
+    skill: 'Node.js & Express', 
+    color: '#7c3aed',
+    details: ['Node.js', 'Express', 'EJS', 'Python']
+  },
+  { 
+    id: 3, 
+    title: 'Frontend', 
+    skill: 'React & Vite', 
+    color: '#06b6d4',
+    details: ['React', 'Vue.js', 'TypeScript', 'HTML5/CSS3']
+  },
 ];
 
 const ServerRack3D = () => {
-  const [activeBlade, setActiveBlade] = useState<number | null>(null);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const isMobile = windowWidth < 640;
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const [zoomedBlade, setZoomedBlade] = useState<number | null>(null);
+  const [isZooming, setIsZooming] = useState(false);
 
   const svgContent = useMemo(() => {
     const h = new Heerich({
@@ -26,6 +43,7 @@ const ServerRack3D = () => {
       camera: { type: 'isometric', angle: -45 }
     });
 
+    // Base Rack Cabinet
     h.applyGeometry({
       type: 'box',
       position: [0, 0, 0],
@@ -36,6 +54,7 @@ const ServerRack3D = () => {
       }
     });
 
+    // Carve out the front bay
     h.removeGeometry({
       type: 'box',
       position: [0.5, 1, -0.1],
@@ -98,87 +117,140 @@ const ServerRack3D = () => {
     return h.toSVG({ padding: 20 });
   }, []);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    let target = e.target as HTMLElement;
-    while (target && target !== e.currentTarget) {
-      if (target.hasAttribute('data-blade')) {
-        const bladeId = Number(target.getAttribute('data-blade'));
-        setActiveBlade(prev => prev === bladeId ? null : bladeId);
-        return;
-      }
-      target = target.parentElement as HTMLElement;
+  const handleBladeClick = (bladeId: number) => {
+    if (zoomedBlade === bladeId) {
+      // Zoom out
+      setIsZooming(true);
+      setZoomLevel(1);
+      setTimeout(() => {
+        setZoomedBlade(null);
+        setIsZooming(false);
+      }, 400);
+    } else {
+      // Zoom in to this blade
+      setIsZooming(true);
+      setZoomedBlade(bladeId);
+      setZoomLevel(2.5);
+      setTimeout(() => setIsZooming(false), 400);
     }
-    setActiveBlade(null);
   };
 
-  // Desktop: label to the left, Mobile: label above
-  const containerWidth = isMobile ? '180px' : '320px';
-  const labelPosition = isMobile 
-    ? { top: '-90px', left: '50%', transform: 'translateX(-50%)' }
-    : { top: blade => blade.top, left: '-15%', transform: 'translate(-30px, -50%)' };
+  const activeBladeData = zoomedBlade !== null ? bladesData[zoomedBlade] : null;
 
   return (
     <div style={{ 
       position: 'relative', 
       width: '100%', 
-      maxWidth: containerWidth, 
-      margin: '0 auto',
-      paddingTop: isMobile ? '100px' : '0' // space for label on mobile
+      maxWidth: '340px', 
+      margin: '0 auto'
     }}>
-      {/* Floating Skill Labels - Above on mobile, Side on desktop */}
-      {bladesData.map((blade) => (
-        <div
-          key={blade.id}
-          style={{
-            position: 'absolute',
-            ...(isMobile 
-              ? { top: `-${(3 - blade.id) * 70 + 30}px`, left: '50%', transform: 'translateX(-50%)' }
-              : { top: blade.top, left: '-15%', transform: 'translate(-30px, -50%)' }
-            ),
-            background: 'rgba(10, 10, 15, 0.92)',
-            border: `1px solid ${blade.color}40`,
-            padding: isMobile ? '10px 16px' : '14px 18px',
-            borderRadius: '12px',
-            pointerEvents: 'none',
-            opacity: activeBlade === blade.id ? 1 : 0,
-            transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            boxShadow: `0 10px 30px ${blade.color}25`,
-            backdropFilter: 'blur(10px)',
-            zIndex: 20,
-            minWidth: isMobile ? '160px' : '180px',
-            textAlign: 'center'
-          }}
-        >
-          <div style={{ 
-            fontSize: isMobile ? '0.65rem' : '0.75rem', 
-            color: blade.color, 
-            fontWeight: 700, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.05em', 
-            marginBottom: '6px' 
+      {/* Zoomed-in Skill Detail Blocks */}
+      {zoomedBlade !== null && !isZooming && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 30,
+          animation: 'fadeSlideIn 0.4s ease-out'
+        }}>
+          <style>{`
+            @keyframes fadeSlideIn {
+              from { opacity: 0; transform: translateY(20px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+          
+          {/* Back button */}
+          <button
+            onClick={() => handleBladeClick(zoomedBlade)}
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backdropFilter: 'blur(10px)'
+            }}
+          >
+            ← Back to Rack
+          </button>
+
+          {/* Header */}
+          <div style={{
+            background: 'var(--bg-card)',
+            border: `1px solid ${activeBladeData!.color}40`,
+            borderRadius: '16px',
+            padding: '20px',
+            marginBottom: '12px'
           }}>
-            {blade.title}
+            <div style={{ 
+              fontSize: '0.75rem', 
+              color: activeBladeData!.color, 
+              fontWeight: 700, 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.05em',
+              marginBottom: '4px'
+            }}>
+              {activeBladeData!.title}
+            </div>
+            <div style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>
+              {activeBladeData!.skill}
+            </div>
           </div>
-          <div style={{ 
-            color: '#ffffff', 
-            fontSize: isMobile ? '0.9rem' : '1.05rem', 
-            fontWeight: 600 
-          }}>
-            {blade.skill}
+
+          {/* Skill Tags */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {activeBladeData!.details.map((skill, i) => (
+              <span
+                key={i}
+                style={{
+                  padding: '8px 14px',
+                  background: `${activeBladeData!.color}12`,
+                  border: `1px solid ${activeBladeData!.color}30`,
+                  borderRadius: '100px',
+                  fontSize: '0.85rem',
+                  color: '#e2e8f0',
+                  fontWeight: 500
+                }}
+              >
+                {skill}
+              </span>
+            ))}
           </div>
         </div>
-      ))}
+      )}
 
-      {/* SVG Rack */}
+      {/* Server Rack SVG */}
       <div 
-        className={`server-rack-wrapper active-${activeBlade}`}
-        onClick={handleClick}
+        className={`server-rack-wrapper zoom-${zoomedBlade}`}
         style={{
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
           filter: 'drop-shadow(0 20px 40px rgba(6, 182, 212, 0.15))',
-          cursor: 'pointer'
+          cursor: zoomedBlade === null ? 'pointer' : 'default',
+          opacity: isZooming ? 0.5 : zoomedBlade !== null ? 0.3 : 1,
+          transition: 'opacity 0.3s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: `scale(${zoomLevel})`,
+          transformOrigin: 'center center'
+        }}
+        onClick={(e) => {
+          if (zoomedBlade !== null || isZooming) return;
+          let target = e.target as HTMLElement;
+          while (target && target !== e.currentTarget) {
+            if (target.hasAttribute('data-blade')) {
+              handleBladeClick(Number(target.getAttribute('data-blade')));
+              return;
+            }
+            target = target.parentElement as HTMLElement;
+          }
         }}
       >
         <style>{`
@@ -193,28 +265,10 @@ const ServerRack3D = () => {
             50% { transform: translateY(-10px); }
           }
           .server-rack-wrapper polygon[data-blade] {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s;
+            transition: filter 0.2s;
           }
           .server-rack-wrapper polygon[data-blade]:hover {
             filter: brightness(1.3);
-          }
-          
-          @media (min-width: 640px) {
-            .server-rack-wrapper.active-0 polygon[data-blade="0"],
-            .server-rack-wrapper.active-1 polygon[data-blade="1"],
-            .server-rack-wrapper.active-2 polygon[data-blade="2"],
-            .server-rack-wrapper.active-3 polygon[data-blade="3"] {
-              transform: translate(-35px, 20px);
-            }
-          }
-          
-          @media (max-width: 639px) {
-            .server-rack-wrapper.active-0 polygon[data-blade="0"],
-            .server-rack-wrapper.active-1 polygon[data-blade="1"],
-            .server-rack-wrapper.active-2 polygon[data-blade="2"],
-            .server-rack-wrapper.active-3 polygon[data-blade="3"] {
-              transform: translate(-18px, 10px);
-            }
           }
         `}</style>
         <div dangerouslySetInnerHTML={{ __html: svgContent }} />
