@@ -1,6 +1,6 @@
 import { Code2, Database, Layout, Terminal } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
-import ServerRack3D from './ServerRack3D';
+import FloatingIslands from './FloatingIslands';
 
 const skillCategories = [
   {
@@ -178,7 +178,7 @@ const SkillsMatrix = () => {
         {/* Right Side: 3D Server Rack */}
         <ScrollReveal width="100%" delay={0.4}>
           <div style={{ flex: '1 1 30%', display: 'flex', justifyContent: 'center' }}>
-            <ServerRack3D />
+            <FloatingIslands />
           </div>
         </ScrollReveal>
       </div>
