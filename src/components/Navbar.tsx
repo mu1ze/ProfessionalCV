@@ -128,7 +128,7 @@ const Navbar = () => {
               }}
             >
               <Mail size={13} />
-              <span className="nav-cta-text">Hire Me</span>
+              <span className="nav-cta-text">Get in Touch</span>
             </a>
 
             <button
