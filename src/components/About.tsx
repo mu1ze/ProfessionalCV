@@ -54,7 +54,7 @@ const About = () => {
             </span>
           </h2>
           <p style={{ fontSize: '1.125rem', maxWidth: '520px', margin: 0 }}>
-            My journey from Lagos to Ontario, shaped by resilience and an unwavering passion for technology.
+            My journey from Abuja, Nigeria to Ontario, Canada shaped by resilience and an unwavering passion for technology.
           </p>
         </div>
       </ScrollReveal>
