@@ -1,6 +1,5 @@
 import { Code2, Database, Layout, Terminal } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
-import PerspectiveCube from './PerspectiveCube';
 
 const skillCategories = [
   {
@@ -62,7 +61,7 @@ const SkillsMatrix = () => {
       </ScrollReveal>
 
       {/* Perspective Cube Demo */}
-      <ScrollReveal width="100%" delay={0.15}>
+      {/* <ScrollReveal width="100%" delay={0.15}>
         <div style={{
           marginBottom: '72px',
           width: '100%',
@@ -71,7 +70,7 @@ const SkillsMatrix = () => {
         }}>
           <PerspectiveCube />
         </div>
-      </ScrollReveal>
+      </ScrollReveal> */}
 
       {/* Skills Grid Below */}
       <div style={{

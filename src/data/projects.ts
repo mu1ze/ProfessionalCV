@@ -218,7 +218,7 @@ export const projects: Project[] = [
             "Playwright",
             "Vitest",
         ],
-        github: "#",
+        github: "#", 
         live: "https://caelifa.dvlli.com",
         features: [
             "Multi-model AI orchestration (4 specialized LLMs per analysis dimension)",
@@ -325,7 +325,7 @@ export const projects: Project[] = [
             "Vehicle owners submitting appraisals and scheduling valuations",
         ],
         structure: "Next.js 16 App Router with server + client component split. PostgreSQL via Neon.tech (pooled connection via postgres.js). API routes handle sell submissions, financing applications, inquiries, and analytics with full input validation and sanitization. 3D models served from /public/Car_Models/. Design tokens via TailwindCSS 4 with custom theme. Email via Resend with non-blocking failures.",
-        featured: true,
+        featured: false,
         problem: "Traditional dealership websites offer static image galleries and no way to experience vehicles remotely, leaving customers underwhelmed and requiring physical visits just to explore inventory.",
         solution: "An immersive 3D showroom lets customers orbit, zoom, and explore vehicles from home. Integrated financing tools provide instant payment estimates, reducing friction between browsing and buying. A full-stack inventory and lead management system replaces fragmented tools.",
         impact: "Deployed to production at brozmotors.dvlli.com. Provides a premium digital presence matching the luxury brand, with 3D vehicle exploration reducing the need for physical showrooms for initial browsing. Analytics dashboard gives staff real-time visibility into lead flow and inventory performance.",
