@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Hero from './components/Hero';
 import About from './components/About';
+
 import ExperienceTimeline from './components/ExperienceTimeline';
 import ProjectShowcase from './components/ProjectShowcase';
 import SkillsMatrix from './components/SkillsMatrix';
@@ -70,6 +71,7 @@ function App() {
       }}>
         <Hero />
         <About />
+
         <ExperienceTimeline />
         <ProjectShowcase />
         <SkillsMatrix />

@@ -1,6 +1,6 @@
 import { Code2, Database, Layout, Terminal } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
-import FloatingIslands from './FloatingIslands';
+import PerspectiveCube from './PerspectiveCube';
 
 const skillCategories = [
   {
@@ -61,135 +61,123 @@ const SkillsMatrix = () => {
         </div>
       </ScrollReveal>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '40px',
-        alignItems: 'center',
-        flexWrap: 'wrap'
-      }}>
-        {/* Left Side: Skills Grid */}
+      {/* Perspective Cube Demo */}
+      <ScrollReveal width="100%" delay={0.15}>
         <div style={{
-          flex: '1 1 60%',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '18px',
+          marginBottom: '72px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
         }}>
-          {skillCategories.map((category, index) => {
-            const Icon = category.icon;
-            return (
-              <ScrollReveal key={category.title} delay={index * 0.1} width="100%">
-                <div
-                  style={{
-                    padding: '28px',
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '20px',
-                    height: '100%',
-                    transition: 'all var(--transition-normal)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = `${category.color}35`;
-                    e.currentTarget.style.boxShadow = `0 8px 36px ${category.color}10`;
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--border)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{
-                    position: 'absolute',
-                    top: '-8px',
-                    right: '-8px',
-                    opacity: 0.035,
-                    transform: 'scale(2.8)',
-                    color: category.color,
-                    pointerEvents: 'none',
-                  }}>
-                    <Icon size={52} />
-                  </div>
-
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '22px',
-                  }}>
-                    <div style={{
-                      padding: '10px',
-                      background: `${category.color}15`,
-                      border: `1px solid ${category.color}25`,
-                      borderRadius: '12px',
-                      color: category.color,
-                      display: 'flex',
-                      flexShrink: 0,
-                    }}>
-                      <Icon size={18} />
-                    </div>
-                    <h3 style={{
-                      fontSize: '0.9875rem',
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                      margin: 0,
-                      letterSpacing: '-0.01em',
-                    }}>
-                      {category.title}
-                    </h3>
-                  </div>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
-                    {category.skills.map((skill, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          padding: '5px 12px',
-                          background: `${category.color}08`,
-                          border: `1px solid ${category.color}18`,
-                          borderRadius: '100px',
-                          fontSize: '0.8125rem',
-                          color: 'var(--text-secondary)',
-                          fontWeight: 500,
-                          transition: 'all var(--transition-fast)',
-                          cursor: 'default',
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.background = `${category.color}16`;
-                          e.currentTarget.style.color = 'var(--text-primary)';
-                          e.currentTarget.style.borderColor = `${category.color}35`;
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.background = `${category.color}08`;
-                          e.currentTarget.style.color = 'var(--text-secondary)';
-                          e.currentTarget.style.borderColor = `${category.color}18`;
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
-            );
-          })}
+          <PerspectiveCube />
         </div>
+      </ScrollReveal>
 
-        {/* Right Side: 3D Server Rack */}
-        <ScrollReveal width="100%" delay={0.4}>
-          <div style={{ flex: '1 1 30%', display: 'flex', justifyContent: 'center' }}>
-            <FloatingIslands />
-          </div>
-        </ScrollReveal>
+      {/* Skills Grid Below */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '18px',
+      }}>
+        {skillCategories.map((category, index) => {
+          const Icon = category.icon;
+          return (
+            <ScrollReveal key={category.title} delay={index * 0.1} width="100%">
+              <div
+                style={{
+                  padding: '28px',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '20px',
+                  height: '100%',
+                  transition: 'all var(--transition-normal)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = `${category.color}35`;
+                  e.currentTarget.style.boxShadow = `0 8px 36px ${category.color}10`;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  opacity: 0.035,
+                  transform: 'scale(2.8)',
+                  color: category.color,
+                  pointerEvents: 'none',
+                }}>
+                  <Icon size={52} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '22px',
+                }}>
+                  <div style={{
+                    padding: '10px',
+                    background: `${category.color}15`,
+                    border: `1px solid ${category.color}25`,
+                    borderRadius: '12px',
+                    color: category.color,
+                    display: 'flex',
+                    flexShrink: 0,
+                  }}>
+                    <Icon size={18} />
+                  </div>
+                  <h3 style={{
+                    fontSize: '0.9875rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                    letterSpacing: '-0.01em',
+                  }}>
+                    {category.title}
+                  </h3>
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px' }}>
+                  {category.skills.map((skill, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        padding: '5px 12px',
+                        background: `${category.color}08`,
+                        border: `1px solid ${category.color}18`,
+                        borderRadius: '100px',
+                        fontSize: '0.8125rem',
+                        color: 'var(--text-secondary)',
+                        fontWeight: 500,
+                        transition: 'all var(--transition-fast)',
+                        cursor: 'default',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = `${category.color}16`;
+                        e.currentTarget.style.color = 'var(--text-primary)';
+                        e.currentTarget.style.borderColor = `${category.color}35`;
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = `${category.color}08`;
+                        e.currentTarget.style.color = 'var(--text-secondary)';
+                        e.currentTarget.style.borderColor = `${category.color}18`;
+                      }}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+          );
+        })}
       </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          #skills > div > div {
-            flex-direction: column !important;
-          }
-        }
-      `}</style>
     </section>
   );
 };
