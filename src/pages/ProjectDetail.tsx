@@ -1,5 +1,6 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { projects } from '../data/projects';
+import { projects, type LinkValue } from '../data/projects';
+import { resolveLinkValue } from '../utils/linkUtils';
 import './ProjectDetail.css';
 
 export default function ProjectDetail() {
@@ -21,8 +22,22 @@ export default function ProjectDetail() {
                         {project.tech.map(t => <span key={t} className="tech-tag">{t}</span>)}
                     </div>
                     <div className="project-links">
-                        {project.live !== '#' && <a href={project.live} target="_blank" rel="noopener noreferrer" className="cta-link">Live Demo</a>}
-                        {project.github !== '#' && <a href={project.github} target="_blank" rel="noopener noreferrer" className="github-link">GitHub</a>}
+                        {(() => {
+                          const liveResolved = resolveLinkValue(project.live as LinkValue);
+                          return liveResolved.isPlaceholder ? (
+                            <span title={liveResolved.tooltip} style={{ cursor: 'default' }}>{liveResolved.label}</span>
+                          ) : (
+                            <a href={liveResolved.href} target="_blank" rel="noopener noreferrer" className="cta-link">Live Demo</a>
+                          );
+                        })()}
+                        {(() => {
+                          const githubResolved = resolveLinkValue(project.github as LinkValue);
+                          return githubResolved.isPlaceholder ? (
+                            <span title={githubResolved.tooltip} style={{ cursor: 'default' }}>{githubResolved.label}</span>
+                          ) : (
+                            <a href={githubResolved.href} target="_blank" rel="noopener noreferrer" className="github-link">GitHub</a>
+                          );
+                        })()}
                     </div>
                 </div>
             </header>

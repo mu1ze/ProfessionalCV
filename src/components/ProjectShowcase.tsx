@@ -1,6 +1,6 @@
 import { ExternalLink, Github, ArrowUpRight, Layers } from 'lucide-react';
-import { projects } from '../data/projects';
-import type { Project } from '../data/projects';
+import { projects, type Project, type LinkValue } from '../data/projects';
+import { resolveLinkValue } from '../utils/linkUtils';
 import { ScrollReveal } from './ScrollReveal';
 import { useState } from 'react';
 import ProjectDetailModal from './ProjectDetailModal';
@@ -121,66 +121,106 @@ const ProjectShowcase = () => {
                     paddingTop: '2px',
                     flexShrink: 0,
                   }}>
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        title="GitHub"
-                        style={{
-                          padding: '9px',
-                          background: 'rgba(255,255,255,0.05)',
-                          border: '1px solid var(--border)',
-                          borderRadius: '11px',
-                          color: 'var(--text-secondary)',
-                          display: 'flex',
-                          transition: 'all var(--transition-fast)',
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.09)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)';
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)';
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
-                        }}
-                      >
-                        <Github size={17} />
-                      </a>
-                    )}
-                    {project.live && (
-                      <a
-                        href={project.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        title="Live Demo"
-                        style={{
-                          padding: '9px',
-                          background: 'rgba(255,255,255,0.05)',
-                          border: '1px solid var(--border)',
-                          borderRadius: '11px',
-                          color: 'var(--text-secondary)',
-                          display: 'flex',
-                          transition: 'all var(--transition-fast)',
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.09)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)';
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)';
-                          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
-                        }}
-                      >
-                        <ExternalLink size={17} />
-                      </a>
-                    )}
+                    {project.github && (() => {
+                      const resolved = resolveLinkValue(project.github as LinkValue);
+                      return resolved.isPlaceholder ? (
+                        <span
+                          title={resolved.tooltip}
+                          style={{
+                            padding: '9px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '11px',
+                            color: 'var(--text-secondary)',
+                            display: 'flex',
+                            cursor: 'default',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {resolved.label}
+                        </span>
+                      ) : (
+                        <a
+                          href={resolved.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          title="GitHub"
+                          style={{
+                            padding: '9px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '11px',
+                            color: 'var(--text-secondary)',
+                            display: 'flex',
+                            transition: 'all var(--transition-fast)',
+                          }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.09)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)';
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
+                          }}
+                        >
+                          <Github size={17} />
+                        </a>
+                      );
+                    })()}
+                    {project.live && (() => {
+                      const resolved = resolveLinkValue(project.live as LinkValue);
+                      return resolved.isPlaceholder ? (
+                        <span
+                          title={resolved.tooltip}
+                          style={{
+                            padding: '9px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '11px',
+                            color: 'var(--text-secondary)',
+                            display: 'flex',
+                            cursor: 'default',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {resolved.label}
+                        </span>
+                      ) : (
+                        <a
+                          href={resolved.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          title="Live Demo"
+                          style={{
+                            padding: '9px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '11px',
+                            color: 'var(--text-secondary)',
+                            display: 'flex',
+                            transition: 'all var(--transition-fast)',
+                          }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.09)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)';
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)';
+                          }}
+                        >
+                          <ExternalLink size={17} />
+                        </a>
+                      );
+                    })()}
                     <button
                       style={{
                         display: 'flex',

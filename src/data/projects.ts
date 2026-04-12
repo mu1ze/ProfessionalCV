@@ -1,11 +1,28 @@
+export type PlaceholderKey = 't1' | 't2' | 't3' | 't4' | 't5' | 't6' | 't7' | 't8' | 't9' | 't10';
+
+export const placeholderMap: Record<PlaceholderKey, { label: string; tooltip: string }> = {
+    t1: { label: 'Private Repo', tooltip: 'This repository is private and cannot be shared publicly.' },
+    t2: { label: 'Work Project', tooltip: 'This is a work project and cannot be shared externally.' },
+    t3: { label: 'Client Project', tooltip: 'This is a client project under NDA.' },
+    t4: { label: 'Archived', tooltip: 'This project has been archived.' },
+    t5: { label: 'Coming Soon', tooltip: 'Live site launching soon.' },
+    t6: { label: 'Internal Use', tooltip: 'For internal use only.' },
+    t7: { label: 'Request Access', tooltip: 'Contact me for access.' },
+    t8: { label: 'Forked Repo', tooltip: 'Original repo has been forked with permission.' },
+    t9: { label: 'Demo Only', tooltip: 'Demo environment, no public URL.' },
+    t10: { label: 'Under NDA', tooltip: 'Project bound by non-disclosure agreement.' },
+};
+
+export type LinkValue = string | PlaceholderKey;
+
 export interface Project {
     id: string;
     title: string;
     description: string;
     fullDescription: string;
     tech: string[];
-    github: string;
-    live: string;
+    github: LinkValue;
+    live: LinkValue;
     features: string[];
     useCases: string[];
     structure: string;
@@ -30,7 +47,7 @@ export const projects: Project[] = [
         description: 'Comprehensive e-commerce and booking management ecosystem for beauty professionals. Scalable, secure, and client-focused.',
         fullDescription: 'Pink Crown is a dual-interface platform designed to revolutionize how beauty professionals manage their business. It combines a high-performance e-commerce storefront for customers with a powerful admin dashboard for inventory, appointments, and CRM.',
         tech: ['React', 'Node.js', 'PostgreSQL', 'Google Maps API', 'Resend'],
-        github: 'https://github.com/mu1ze/Pink_Crown',
+        github: 't3',
         live: 'https://pink-crown.com',
         features: [
             'Full-featured E-commerce Storefront',
@@ -73,7 +90,7 @@ export const projects: Project[] = [
         fullDescription: 'High_Heat solves the "where need to play" problem for amateur athletes. It enables users to create, manage, and join local pickup games while delivering intelligent facility recommendations based on location and amenities.',
         tech: ['React', 'Node.js', 'PostgreSQL', 'Google Maps API', 'Supabase'],
         github: 'https://github.com/mu1ze/High_Heat/tree/Muiz',
-        live: '#',
+        live: 't4',
         features: [
             'Geospatial Facility Discovery (Google Maps)',
             'Real-time Game Scheduling & Joining',
@@ -101,7 +118,7 @@ export const projects: Project[] = [
         fullDescription: 'Job-Hunter is a tool designed to maximize resume visibility in applicant tracking systems and recruiter workflows. It analyzes job descriptions, tailors resume content, and tracks applications to improve the overall job search success rate.',
         tech: ['TypeScript', 'PLpgSQL', 'PostgreSQL', 'Node.js'],
         github: 'https://github.com/mu1ze/Job-Hunter',
-        live: '#',
+        live: 't4',
         features: [
             'Resume optimization against job descriptions',
             'ATS keyword analysis and scoring',
@@ -179,7 +196,7 @@ export const projects: Project[] = [
         fullDescription: 'adam-website is a handcrafted personal portfolio site built with pure JavaScript and CSS — no frameworks. It showcases projects, skills, and contact information with a clean, performant, and lightweight design.',
         tech: ['JavaScript', 'CSS', 'HTML'],
         github: 'https://github.com/mu1ze/adam-website',
-        live: '#',
+        live: 'https://adam.dvlli.com',
         features: [
             'Vanilla JavaScript interactions and animations',
             'Custom CSS layout and responsive design',
@@ -218,7 +235,7 @@ export const projects: Project[] = [
             "Playwright",
             "Vitest",
         ],
-        github: "#", 
+        github: "t1", 
         live: "https://caelifa.dvlli.com",
         features: [
             "Multi-model AI orchestration (4 specialized LLMs per analysis dimension)",
@@ -305,8 +322,8 @@ export const projects: Project[] = [
             "Recharts",
             "Outfit + Inter fonts",
         ],
-        github: "https://github.com/mu1ze/BrozMotorz",
-        live: "https://brozmotors.dvlli.com",
+        github: "t3",
+        live: "t5",
         features: [
             "Interactive 3D Showroom with orbit controls and auto-rotation for vehicle models",
             "Premium dark luxury design with glassmorphism and gold accent system",
