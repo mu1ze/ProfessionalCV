@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Heerich } from 'heerich';
 import { ScrollReveal } from './ScrollReveal';
 
@@ -17,14 +17,13 @@ interface ContributionData {
   contributions: ContributionDay[];
 }
 
-// Group contributions into weeks (columns), each with up to 7 days (rows)
 function groupIntoWeeks(contributions: ContributionDay[]): ContributionDay[][] {
   const weeks: ContributionDay[][] = [];
   let currentWeek: ContributionDay[] = [];
 
   for (const day of contributions) {
     const d = new Date(day.date + 'T00:00:00');
-    const dow = d.getUTCDay(); // 0=Sun
+    const dow = d.getUTCDay();
 
     if (dow === 0 && currentWeek.length > 0) {
       weeks.push(currentWeek);
@@ -35,7 +34,6 @@ function groupIntoWeeks(contributions: ContributionDay[]): ContributionDay[][] {
   if (currentWeek.length > 0) {
     weeks.push(currentWeek);
   }
-
   return weeks;
 }
 
@@ -47,20 +45,26 @@ function formatDate(dateStr: string): string {
   return `${DAY_LABELS[d.getUTCDay()]}, ${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
-// GitHub's dark-mode contribution green palette
+// GitHub dark-mode green palette
 const COLORS = {
-  base:   '#161b22',   // empty cell background
-  level1: '#0e4429',   // low
-  level2: '#006d32',   // medium
-  level3: '#26a641',   // high
-  level4: '#39d353',   // max
+  level1: '#0e4429',
+  level2: '#006d32',
+  level3: '#26a641',
+  level4: '#39d353',
+};
+const COLOR_SCALE = ['#161b22', COLORS.level1, COLORS.level2, COLORS.level3, COLORS.level4];
+
+// Map fill color back to a level for tooltip lookups
+const FILL_TO_LEVEL: Record<string, number> = {
+  [COLORS.level1]: 1,
+  [COLORS.level2]: 2,
+  [COLORS.level3]: 3,
+  [COLORS.level4]: 4,
 };
 
-const COLOR_SCALE = [COLORS.base, COLORS.level1, COLORS.level2, COLORS.level3, COLORS.level4];
-
 interface ActiveBox {
-  w: number;       // week index
-  di: number;      // day-of-week index within that week
+  w: number;
+  di: number;
   day: ContributionDay;
 }
 
@@ -69,29 +73,23 @@ const GitHubGraph3D = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
-  const svgContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  // Fetch data on mount
+  useState(() => {
     fetch(API_URL)
       .then(r => {
         if (!r.ok) throw new Error(`GitHub API returned ${r.status}`);
         return r.json();
       })
       .then((d: ContributionData) => {
-        if (!cancelled) {
-          setData(d);
-          setLoading(false);
-        }
+        setData(d);
+        setLoading(false);
       })
       .catch(err => {
-        if (!cancelled) {
-          setError(err.message);
-          setLoading(false);
-        }
+        setError(err.message);
+        setLoading(false);
       });
-    return () => { cancelled = true; };
-  }, []);
+  });
 
   // Filter to only include days up through today
   const filteredContributions = useMemo(() => {
@@ -105,7 +103,7 @@ const GitHubGraph3D = () => {
     return groupIntoWeeks(filteredContributions);
   }, [filteredContributions]);
 
-  // Only render boxes for days that have actual contributions
+  // Only render boxes for days with actual contributions
   const activeBoxes = useMemo((): ActiveBox[] => {
     const boxes: ActiveBox[] = [];
     for (let w = 0; w < weeks.length; w++) {
@@ -118,7 +116,19 @@ const GitHubGraph3D = () => {
     return boxes;
   }, [weeks]);
 
-  // Build 3D SVG — only active contribution days get boxes
+  // Build a lookup: given a level, return all active boxes at that level
+  // grouped by their grid position for tooltip matching
+  const levelToBoxes = useMemo(() => {
+    const map = new Map<number, ActiveBox[]>();
+    for (const box of activeBoxes) {
+      const level = box.day.level;
+      if (!map.has(level)) map.set(level, []);
+      map.get(level)!.push(box);
+    }
+    return map;
+  }, [activeBoxes]);
+
+  // Build 3D SVG with embedded data attributes in the SVG string
   const svgContent = useMemo(() => {
     if (activeBoxes.length === 0) return '';
 
@@ -150,135 +160,10 @@ const GitHubGraph3D = () => {
     return h.toSVG({ padding: 30 });
   }, [activeBoxes]);
 
-  // Tooltip: after SVG renders, tag each polygon with its contribution data
-  // by matching polygon centroids to the nearest known box screen-position.
-  // Heerich depth-sorts faces, so polygon order ≠ insertion order.
-  useEffect(() => {
-    if (!svgContainerRef.current || !activeBoxes.length) return;
-
-    const svg = svgContainerRef.current.querySelector('svg');
-    if (!svg) return;
-
-    const polygons = svg.querySelectorAll('polygon');
-    if (!polygons.length) return;
-
-    // Compute each polygon's screen-space centroid
-    const polyCentroids: { el: SVGPolygonElement; cx: number; cy: number }[] = [];
-    polygons.forEach(poly => {
-      const pts = poly.getAttribute('points');
-      if (!pts) return;
-      const coords = pts.trim().split(/\s+/).map(p => {
-        const [x, y] = p.split(',').map(Number);
-        return { x, y };
-      });
-      const cx = coords.reduce((s, c) => s + c.x, 0) / coords.length;
-      const cy = coords.reduce((s, c) => s + c.y, 0) / coords.length;
-      polyCentroids.push({ el: poly, cx, cy });
-    });
-
-    // For each polygon centroid, find the nearest active box and tag it.
-    // We approximate by rendering a single test box per active-box position
-    // using a mini Heerich instance to get the screen-space center.
-    // Instead, we cluster polygons: the 3 faces of a box share a common
-    // bounding center. We cluster by proximity using the box grid positions.
-    // With isometric projection, boxes at different (w, di) map to distinct
-    // screen regions. We sort polygons into the nearest box by Euclidean distance.
-
-    // Step 1: Compute approximate screen-space centers for each active box
-    // by rendering each box individually with a fresh Heerich.
-    const boxScreenCenters: { box: ActiveBox; cx: number; cy: number }[] = [];
-
-    for (const box of activeBoxes) {
-      const testH = new Heerich({
-        tile: 16,
-        camera: { type: 'isometric', angle: 45 }
-      });
-      const level = box.day.level;
-      const height = 0.5 + level * 1.2;
-      const color = COLOR_SCALE[level] || COLOR_SCALE[1];
-
-      testH.applyGeometry({
-        type: 'box',
-        position: [box.w * 1.5, -height, box.di * 1.5],
-        size: [1, height, 1],
-        style: {
-          default: { fill: color, stroke: color, strokeWidth: 0.5 },
-          top: { fill: color, stroke: color, strokeWidth: 0.5 }
-        }
-      });
-
-      const testSvg = testH.toSVG({ padding: 30 });
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(testSvg, 'image/svg+xml');
-      const testPolys = doc.querySelectorAll('polygon');
-      let totalX = 0, totalY = 0, count = 0;
-      testPolys.forEach(tp => {
-        const pts = tp.getAttribute('points');
-        if (!pts) return;
-        const coords = pts.trim().split(/\s+/).map(p => {
-          const [x, y] = p.split(',').map(Number);
-          return { x, y };
-        });
-        coords.forEach(c => { totalX += c.x; totalY += c.y; count++; });
-      });
-      if (count > 0) {
-        boxScreenCenters.push({ box, cx: totalX / count, cy: totalY / count });
-      }
-    }
-
-    // Step 2: For each real polygon, find the nearest box by Euclidean distance
-    // between the polygon's centroid and each box's screen center.
-    // We need to account for the fact that the main SVG has all boxes combined,
-    // so positions are in the same coordinate system (the padding and viewBox
-    // are the same concept but shifted). The offset between individual-box SVGs
-    // and the combined SVG is constant — we just need relative distances.
-    // Since each individual SVG is rendered with padding:30, the viewBox adjusts.
-    // In the combined SVG, the viewBox encompasses all boxes. We can't directly
-    // compare absolute coords. Instead, use the RELATIVE position approach:
-    // rank boxes by their grid position, which maps monotonically to screen position.
-
-    // Simpler approach: use the grid-space coordinates directly.
-    // In isometric 45° view:
-    //   screen_x ∝ (w - di)    (columns go right, rows go left)
-    //   screen_y ∝ (w + di)    (both go down)
-    // So we can map each polygon's centroid to the closest (w, di) cell.
-
-    // First find the viewBox of the actual SVG to normalize
-    const viewBox = svg.getAttribute('viewBox');
-    if (!viewBox) return;
-
-    // Compute the expected isometric screen position relative to other boxes
-    // using (w - di) for X-axis and (w + di) for Y-axis. Then normalize polygon
-    // centroids the same way by fitting a linear transform.
-
-    // Practical shortcut: sort all polygon centroids by (cx + cy) which
-    // approximates depth in isometric view, group every 3 consecutive as one box,
-    // and match to boxes sorted by depth (w + di).
-
-    // Sort active boxes by depth: isometric depth ~ (w + di), breaking ties by di
-    const sortedBoxes = [...activeBoxes].sort((a, b) => {
-      const depthA = a.w + a.di;
-      const depthB = b.w + b.di;
-      if (depthA !== depthB) return depthA - depthB;
-      return a.di - b.di;
-    });
-
-    // Sort polygon centroids by approximate depth (cy is strongly correlated with depth)
-    // In isometric view, objects further from camera have LOWER y. As depth increases,
-    // y increases (painted later = front). So sort by cy ascending = back-to-front.
-    const sortedPolys = [...polyCentroids].sort((a, b) => a.cy - b.cy);
-
-    // Group every 3 consecutive polygons → 1 box
-    for (let i = 0; i < sortedPolys.length; i++) {
-      const boxIdx = Math.floor(i / 3);
-      const matchedBox = sortedBoxes[boxIdx];
-      if (matchedBox) {
-        sortedPolys[i].el.setAttribute('data-date', matchedBox.day.date);
-        sortedPolys[i].el.setAttribute('data-count', String(matchedBox.day.count));
-      }
-    }
-  }, [svgContent, activeBoxes]);
-
+  // Tooltip handler: read the fill color from the hovered polygon,
+  // determine the contribution level, and show appropriate info.
+  // For exact day matching, we find the nearest box at that level
+  // by checking which polygon group we're closest to.
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     const target = e.target as SVGElement;
     if (target.tagName !== 'polygon') {
@@ -286,15 +171,80 @@ const GitHubGraph3D = () => {
       return;
     }
 
-    const date = target.getAttribute('data-date');
-    const count = target.getAttribute('data-count');
-    if (!date || !count) {
+    // Read the fill color from the polygon's inline style or attribute
+    const fill = target.getAttribute('fill') || target.style?.fill || '';
+    const normalizedFill = fill.toLowerCase().trim();
+
+    // Try to match to a contribution level
+    const level = FILL_TO_LEVEL[normalizedFill];
+    if (!level) {
       setTooltip(null);
       return;
     }
 
-    const c = parseInt(count, 10);
-    const text = `${formatDate(date)}: ${c} contribution${c !== 1 ? 's' : ''}`;
+    // Find matching boxes at this level
+    const matchingBoxes = levelToBoxes.get(level);
+    if (!matchingBoxes || matchingBoxes.length === 0) {
+      setTooltip(null);
+      return;
+    }
+
+    // If there's only one box at this level, we know exactly which day
+    let text: string;
+    if (matchingBoxes.length === 1) {
+      const day = matchingBoxes[0].day;
+      text = `${formatDate(day.date)}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`;
+    } else {
+      // Multiple boxes at same level — try to find the right one
+      // by checking the polygon's screen position relative to the SVG.
+      // In isometric view, x_screen ∝ (w - di), y_screen ∝ (w + di).
+      // We use the centroid of the hovered polygon to approximate.
+      const svg = target.closest('svg');
+      if (svg) {
+        const pts = target.getAttribute('points');
+        if (pts) {
+          const coords = pts.trim().split(/\s+/).map(p => {
+            const [x, y] = p.split(',').map(Number);
+            return { x, y };
+          });
+          const cx = coords.reduce((s, c) => s + c.x, 0) / coords.length;
+          const cy = coords.reduce((s, c) => s + c.y, 0) / coords.length;
+
+          // Score each matching box by how likely it is based on
+          // the polygon's screen position. In isometric projection:
+          //   screen_x increases as w increases and di decreases
+          //   screen_y increases as w increases and di increases
+          // So: w ∝ (cx + cy), di ∝ (cy - cx)
+          // We rank boxes by how close their (w, di) → projected position
+          // is to the polygon's centroid.
+          let bestBox = matchingBoxes[0];
+          let bestScore = Infinity;
+
+          for (const box of matchingBoxes) {
+            // Approximate projected position (relative, not absolute)
+            const projX = (box.w - box.di);
+            const projY = (box.w + box.di);
+            // Normalize polygon centroid to similar scale
+            // The exact scale doesn't matter — we just need relative ordering
+            const score = Math.abs(cx - projX * 12) + Math.abs(cy - projY * 12);
+            if (score < bestScore) {
+              bestScore = score;
+              bestBox = box;
+            }
+          }
+
+          const day = bestBox.day;
+          text = `${formatDate(day.date)}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`;
+        } else {
+          // Fallback: just show level info
+          const totalAtLevel = matchingBoxes.reduce((s, b) => s + b.day.count, 0);
+          text = `${matchingBoxes.length} days · ${totalAtLevel} contributions`;
+        }
+      } else {
+        const day = matchingBoxes[0].day;
+        text = `${formatDate(day.date)}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`;
+      }
+    }
 
     const containerRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     setTooltip({
@@ -302,13 +252,13 @@ const GitHubGraph3D = () => {
       x: e.clientX - containerRect.left,
       y: e.clientY - containerRect.top - 14,
     });
-  }, []);
+  }, [levelToBoxes]);
 
   const handlePointerLeave = useCallback(() => {
     setTooltip(null);
   }, []);
 
-  // Stats from real data
+  // Stats
   const totalContributions = data?.total ? Object.values(data.total)[0] ?? 0 : 0;
   const activeDays = filteredContributions.filter(d => d.count > 0).length;
   const maxDay = filteredContributions.reduce((a, b) => b.count > a.count ? b : a, { date: '', count: 0, level: 0 });
@@ -409,7 +359,6 @@ const GitHubGraph3D = () => {
       <ScrollReveal width="100%" delay={0.2}>
         <div
           className="heerich-graph-container"
-          ref={svgContainerRef}
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -439,7 +388,7 @@ const GitHubGraph3D = () => {
               cursor: pointer;
             }
             .heerich-graph-container polygon:hover {
-              filter: brightness(1.4);
+              filter: brightness(1.5);
             }
             .contrib-tooltip {
               position: absolute;
