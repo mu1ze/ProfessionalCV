@@ -3,7 +3,8 @@ import { Heerich } from 'heerich';
 import { ScrollReveal } from './ScrollReveal';
 
 const GITHUB_USERNAME = 'mu1ze';
-const API_URL = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`;
+const CURRENT_YEAR = new Date().getFullYear();
+const API_URL = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=${CURRENT_YEAR}`;
 
 interface ContributionDay {
   date: string;
@@ -12,7 +13,7 @@ interface ContributionDay {
 }
 
 interface ContributionData {
-  total: { lastYear: number };
+  total: Record<string, number>;
   contributions: ContributionDay[];
 }
 
@@ -74,10 +75,17 @@ const GitHubGraph3D = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const weeks = useMemo(() => {
+  // Filter to only include days up through today
+  const filteredContributions = useMemo(() => {
     if (!data) return [];
-    return groupIntoWeeks(data.contributions);
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    return data.contributions.filter(d => d.date <= today);
   }, [data]);
+
+  const weeks = useMemo(() => {
+    if (!filteredContributions.length) return [];
+    return groupIntoWeeks(filteredContributions);
+  }, [filteredContributions]);
 
   // Build 3D SVG from real data
   const svgContent = useMemo(() => {
@@ -170,13 +178,13 @@ const GitHubGraph3D = () => {
     setTooltip(null);
   }, []);
 
-  // Stats from real data
-  const totalContributions = data?.total?.lastYear ?? 0;
-  const activeDays = data?.contributions?.filter(d => d.count > 0).length ?? 0;
-  const maxDay = data?.contributions?.reduce((a, b) => b.count > a.count ? b : a, { date: '', count: 0, level: 0 });
+  // Stats from real data — use the year key from the API response
+  const totalContributions = data?.total ? Object.values(data.total)[0] ?? 0 : 0;
+  const activeDays = filteredContributions.filter(d => d.count > 0).length;
+  const maxDay = filteredContributions.reduce((a, b) => b.count > a.count ? b : a, { date: '', count: 0, level: 0 });
   const currentStreak = useMemo(() => {
-    if (!data) return 0;
-    const reversed = [...data.contributions].reverse();
+    if (!filteredContributions.length) return 0;
+    const reversed = [...filteredContributions].reverse();
     // skip today if it's 0 (day not over yet)
     const start = reversed[0]?.count === 0 ? 1 : 0;
     let streak = 0;
@@ -185,7 +193,7 @@ const GitHubGraph3D = () => {
       else break;
     }
     return streak;
-  }, [data]);
+  }, [filteredContributions]);
 
   return (
     <section style={{
@@ -205,7 +213,7 @@ const GitHubGraph3D = () => {
             Contribution <span style={{ color: '#06b6d4' }}>Matrix</span>
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-            Live data from my GitHub — last 12 months of commit activity.
+            Live data from my GitHub — {CURRENT_YEAR} commit activity.
           </p>
         </div>
       </ScrollReveal>
